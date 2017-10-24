@@ -40,7 +40,7 @@
 #define MSG_TURN30  0x4
 #define MSG_TURN90  0x5
 #define MSG_TURN120 0x6
-#define MSG_ACKq    0x7
+#define MSG_ACK     0x7
 
 //Constants
 #define BUFFER_SIZE             (256)
@@ -290,7 +290,6 @@ int readNibble(char* d0,
     writeGPIO(strobe, LOW);
 
     //5: the PIC will clear the bus
-
     return (int)data;
 }
 
@@ -340,14 +339,16 @@ void servo_30();
 void servo_90();
 void servo_120();
 
-//main
+
+//File handles for the pins
+char* fileHandleGPIO_4;
+char* fileHandleGPIO_5;
+char* fileHandleGPIO_6;
+char* fileHandleGPIO_7;
+char* fileHandleGPIO_S;  //Should these 5 variables be used globally? (jk you're right they should be global)- 
+
 int main(void)
 {
-    char* fileHandleGPIO_4;
-    char* fileHandleGPIO_5;
-    char* fileHandleGPIO_6;
-    char* fileHandleGPIO_7;
-    char* fileHandleGPIO_S;  //Should these 5 variables be used globally? - (I think they're fine here - AM)
 
     fileHandleGPIO_4 = openGPIO(GP_4, GPIO_DIRECTION_OUT);
     fileHandleGPIO_5 = openGPIO(GP_5, GPIO_DIRECTION_OUT);
@@ -423,19 +424,142 @@ int main(void)
 
 //stubs for the command functions
 void reset()
-{}
+{
+    int receive_msg = 0;
+    while(receive_msg != MSG_ACK)
+    {
+        writeNibble(MSG_RESET, 
+                    fileHandleGPIO_4,
+                    fileHandleGPIO_5,
+                    fileHandleGPIO_6,
+                    fileHandleGPIO_7,
+                    fileHandleGPIO_S);
+        usleep(30);
+        receive_msg = readNibble(fileHandleGPIO_4,
+                                fileHandleGPIO_5,
+                                fileHandleGPIO_6,
+                                fileHandleGPIO_7,
+                                fileHandleGPIO_S);
+    }
+    printf("Reset message sent");
+}
 
 void ping()
-{}
+{
+    int receive_msg = 0;
+    while(receive_msg != MSG_ACK)
+    {
+        writeNibble(MSG_PING, 
+                    fileHandleGPIO_4,
+                    fileHandleGPIO_5,
+                    fileHandleGPIO_6,
+                    fileHandleGPIO_7,
+                    fileHandleGPIO_S);
+        usleep(30);
+        receive_msg = readNibble(fileHandleGPIO_4,
+                                fileHandleGPIO_5,
+                                fileHandleGPIO_6,
+                                fileHandleGPIO_7,
+                                fileHandleGPIO_S);
+    }
+    printf("Ping message sent");
+}
 
+//requests the PIC to send its current adc value MSN (most significant nibble) first
 void adc_value()
-{}
+{
+    int i;
+    int receive_msg = 0;
+    int adc_value = 0;
+    while(receive_msg != MSG_ACK)
+    {
+        writeNibble(MSG_GET, 
+                    fileHandleGPIO_4,
+                    fileHandleGPIO_5,
+                    fileHandleGPIO_6,
+                    fileHandleGPIO_7,
+                    fileHandleGPIO_S);
+        //expect to receive 3 messages containing ADC values, msn first
+        usleep(30);
+        for(i = 8; i >= 0; i -= 4)
+        {
+            receive_msg = readNibble(fileHandleGPIO_4,
+                                    fileHandleGPIO_5,
+                                    fileHandleGPIO_6,
+                                    fileHandleGPIO_7,
+                                    fileHandleGPIO_S);
+            adc_value += (unsigned receive_msg) << i;
+            usleep(30);
+        }
+        //expect one last ACK message
+        receive_msg = readNibble(fileHandleGPIO_4,
+                                fileHandleGPIO_5,
+                                fileHandleGPIO_6,
+                                fileHandleGPIO_7,
+                                fileHandleGPIO_S);
+    }
+    printf("adc message received successfully: %x", adc_value);
+}
 
 void servo_30()
-{}
+{
+    int receive_msg = 0;
+    while(receive_msg != MSG_ACK)
+    {
+        writeNibble(MSG_TURN30, 
+                    fileHandleGPIO_4,
+                    fileHandleGPIO_5,
+                    fileHandleGPIO_6,
+                    fileHandleGPIO_7,
+                    fileHandleGPIO_S);
+        usleep(30);
+        receive_msg = readNibble(fileHandleGPIO_4,
+                                fileHandleGPIO_5,
+                                fileHandleGPIO_6,
+                                fileHandleGPIO_7,
+                                fileHandleGPIO_S);
+    }
+    printf("servo_30 message sent");
+}
 
 void servo_90()
-{}
+{
+    int receive_msg = 0;
+    while(receive_msg != MSG_ACK)
+    {
+        writeNibble(MSG_TURN90, 
+                    fileHandleGPIO_4,
+                    fileHandleGPIO_5,
+                    fileHandleGPIO_6,
+                    fileHandleGPIO_7,
+                    fileHandleGPIO_S);
+        usleep(30);
+        receive_msg = readNibble(fileHandleGPIO_4,
+                                fileHandleGPIO_5,
+                                fileHandleGPIO_6,
+                                fileHandleGPIO_7,
+                                fileHandleGPIO_S);
+    }
+    printf("Servo_90 message sent");
+}
 
 void servo_120()
-{}
+{
+    int receive_msg = 0;
+    while(receive_msg != MSG_ACK)
+    {
+        writeNibble(MSG_TURN120, 
+                    fileHandleGPIO_4,
+                    fileHandleGPIO_5,
+                    fileHandleGPIO_6,
+                    fileHandleGPIO_7,
+                    fileHandleGPIO_S);
+        usleep(30);
+        receive_msg = readNibble(fileHandleGPIO_4,
+                                fileHandleGPIO_5,
+                                fileHandleGPIO_6,
+                                fileHandleGPIO_7,
+                                fileHandleGPIO_S);
+    }
+    printf("Servo_120 message sent");
+}
