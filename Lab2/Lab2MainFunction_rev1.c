@@ -436,28 +436,31 @@ void reset()
                                 fileHandleGPIO_7,
                                 fileHandleGPIO_S);
     }
-    printf("Reset message sent");
+    printf("Reset message sent\n");
 }
 
 void ping()
 {
-    int receive_msg = 0;
+    int receive_msg = 0;  
     while(receive_msg != MSG_ACK)
     {
+        printf("Starting to send ping\n");
         writeNibble(MSG_PING, 
                     fileHandleGPIO_4,
                     fileHandleGPIO_5,
                     fileHandleGPIO_6,
                     fileHandleGPIO_7,
                     fileHandleGPIO_S);
+        printf("Wrote Nibble to line\n");
         usleep(30);
         receive_msg = readNibble(fileHandleGPIO_4,
                                 fileHandleGPIO_5,
                                 fileHandleGPIO_6,
                                 fileHandleGPIO_7,
                                 fileHandleGPIO_S);
+        printf("Received message from PIC: %x \n", receive_msg);
     }
-    printf("Ping message sent");
+    printf("Ping message sent\n");
 }
 
 //requests the PIC to send its current adc value MSN (most significant nibble) first
@@ -493,7 +496,7 @@ void adc_value()
                                 fileHandleGPIO_7,
                                 fileHandleGPIO_S);
     }
-    printf("adc message received successfully: %x", adc_value);
+    printf("adc message received successfully: %x\n", adc_value);
 }
 
 void servo_30()
@@ -514,7 +517,7 @@ void servo_30()
                                 fileHandleGPIO_7,
                                 fileHandleGPIO_S);
     }
-    printf("servo_30 message sent");
+    printf("servo_30 message sent\n");
 }
 
 void servo_90()
@@ -535,7 +538,7 @@ void servo_90()
                                 fileHandleGPIO_7,
                                 fileHandleGPIO_S);
     }
-    printf("Servo_90 message sent");
+    printf("Servo_90 message sent\n");
 }
 
 void servo_120()
@@ -556,5 +559,5 @@ void servo_120()
                                 fileHandleGPIO_7,
                                 fileHandleGPIO_S);
     }
-    printf("Servo_120 message sent");
+    printf("Servo_120 message sent\n");
 }
