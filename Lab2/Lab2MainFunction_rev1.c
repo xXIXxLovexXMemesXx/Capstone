@@ -59,18 +59,19 @@ char* openGPIO(int gpio_handle, int direction )
     if(exportFh== NULL)
     {
         printf("Couldn't not open export file\n");
+        fclose(exportFh);
         return NULL;
     }
     char numBuffer[5];
     snprintf(numBuffer, 5, "%d", gpio_handle);
     n = fputs(numBuffer, exportFh);
+    fclose(exportFh);
     if(n < 0)
     {
         printf("error writing to export file\n");
         return NULL;
     }
-    fclose(exportFh);
-
+    
     //form the file name of the newly created gpio directory
     char *gpioDirectory = malloc(BUFFER_SIZE);
 
@@ -92,6 +93,7 @@ char* openGPIO(int gpio_handle, int direction )
     {
         printf("gpio direction file is null %s \n", gpioDirection);
         free(gpioDirectory);
+        fclose(directionFh);
         return NULL;
     }
 
@@ -107,6 +109,7 @@ char* openGPIO(int gpio_handle, int direction )
     {
         printf("Error writing to gpio direction file\n");
         free(gpioDirectory);
+        fclose(directionFh);
         return NULL;
     }
     fclose(directionFh);
@@ -117,6 +120,7 @@ char* openGPIO(int gpio_handle, int direction )
     strcat(gpioValue, "value");
     FILE* valueFh = fopen(gpioValue, "w");
     n = fputs("1", valueFh);
+    fclose(valueFh);
     if(n < 0)
     {
         printf("Error writing to gpio value file\n");
@@ -142,9 +146,11 @@ int writeGPIO(char* gpioDirectory, int value)
     snprintf(numBuffer, 5, "%d", value);
 
     int n = fputs(numBuffer, valueFh);
+    fclose(valueFh);
     if(n < 0)
     {
         printf("Error writin to gpio value file in %s", gpioDirectory);
+       
         return ERROR;
     }
 
@@ -171,6 +177,7 @@ int setGPIODirection(char* gpioDirectory, int direction)
         n = fputs("out", directionFh);
     }
 
+    fclose(directionFh);
     if(n < 0)
     {
         printf("Error writin to gpio value file in %s", gpioDirectory);
@@ -193,6 +200,7 @@ int readGPIO(char* gpioDirectory)
 
     char numBuffer[5];
     char* test = fgets(numBuffer, 5, valueFh);
+    fclose(valueFh);
     if(test == NULL)
     {
         printf("Error reading from gpio value %s", gpioDirectory);
@@ -223,10 +231,10 @@ void writeNibble(unsigned char data,
     writeGPIO(strobe, LOW);
 
     //2: output the nibble to the bus
-    writeGPIO(d0, data & 0);
-    writeGPIO(d1, (data & 1) >> 1);
-    writeGPIO(d2, (data & 2) >> 2);
-    writeGPIO(d3, (data & 4) >> 3);
+    writeGPIO(d0, data & 1);
+    writeGPIO(d1, (data & 2) >> 1);
+    writeGPIO(d2, (data & 4) >> 2);
+    writeGPIO(d3, (data & 8) >> 3);
 
     //3: raise strobe and wait at least 10ms
     writeGPIO(strobe, HIGH);
@@ -287,13 +295,40 @@ int readNibble(char* d0,
 }
 
 // tests the GPIO write and exits
-void testGPIO(char * fh)
+// connect a scope or something to the strobe port and watch for output
+void testGPIOWrite(char * fh)
 {
+    int i;
     //test read and write.
-    int w = writeGPIO(fh, HIGH);
-    assert(w == HIGH && "Write high");
-    w = writeGPIO(fh, LOW);
-    assert(w == LOW && "Write Low");
+    for(i =0; i <1000; i++)
+    {
+        int w = writeGPIO(fh, HIGH);
+        assert(w == HIGH && "Write high");
+        usleep(10);
+        w = writeGPIO(fh, LOW);
+        assert(w == LOW && "Write Low");
+        usleep(10);
+    }
+    exit(0);
+}
+
+// tests the GPIO writenibble and exits
+//repeatedly sends nibbles from 0x0 to 0xF
+//How to test: Connect to logic analyzer, watch values
+void testGPIOWriteNibble(char* strobe_fh,
+                            char* d4, //48
+                            char* d5, //50
+                            char* d6, //52
+                            char* d7) //54 
+{
+    unsigned i;
+    //test writeNibble
+    for( i =0; i <1000; i++)
+    {
+        printf("%X\n",i % 0xF);
+        writeNibble( i %0xF, d4, d5, d6, d7, strobe_fh);
+        usleep(20);
+    }
     exit(0);
 }
 
@@ -323,10 +358,13 @@ int main(void)
     The data lines are also set LOW (lines 99-102) to assure that
     they aren't sending any data */ 
     
+    testGPIOWriteNibble(fileHandleGPIO_S,
+                            fileHandleGPIO_4,
+                            fileHandleGPIO_5,
+                            fileHandleGPIO_6,
+                            fileHandleGPIO_7);
     while(1)
     {
-
-    writeGPIO(fileHandleGPIO_S, HIGH); 
     /*For line 106, I'm not sure what the best way to handle 
     the write to of the GPIO is since a #define directive was 
     used (lines 28 & 29 ) to pick high or low. Can you send a
