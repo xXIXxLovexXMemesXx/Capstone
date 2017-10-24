@@ -174,6 +174,7 @@ unsigned char receive_msg()
             results = 0x5;
         }
     }
+    return results;
  /* 1.wait strobe high
     2.wait strobe low
     3.read the data
@@ -199,17 +200,87 @@ void sensorReset()
     //reset the servo position
     servoRotate0();
 }
+void ADC_Init(void)  {
+ //  Configure ADC module  
+ //---- Set the Registers below::
+ // 1. Set ADC CONTROL REGISTER 1 to 0 
+ // 2. Set ADC CONTROL REGISTER 2 to 0 
+ // 3. Set ADC THRESHOLD REGISTER to 0
+ // 4. Disable ADC auto conversion trigger control register
+ // 5. Disable ADACT  
+ // 6. Clear ADAOV ACC or ADERR not Overflowed  related register
+ // 7. Disable ADC Capacitors
+ // 8. Set ADC Precharge time control to 0 
+ // 9. Set ADC Clock 
+ // 10 Set ADC positive and negative references
+ // 11. ADC channel - Analog Input
+ // 12. Set ADC result alignment, Enable ADC module, Clock Selection Bit, Disable ADC Continuous Operation, Keep ADC inactive
+  
+ 
+    TRISA = 0b11111110;   //set PORTA to input except for pin0
+    TRISAbits.TRISA1 = 1;   //set pin A1 to input
+    ANSELAbits.ANSA1 = 1;   //set as analog input
+    ADCON1 = 0;
+    ADCON2 = 0;
+    ADCON3 = 0;
+    ADACT = 0;
+    ADSTAT = 0;
+    ADCAP = 0;
+    ADPRE = 0;
+    ADCON0 = 0b10000100; 
+    ADREF = 0;
+    ADPCH = 0b00000001;
+            
+} 
+
+unsigned int ADC_conversion_results() {  
+    ADPCH = 1; 
+           
+    ADCON0 |= 1;           //Initializes A/D conversion
+    
+    while(ADCON0 & 1);             //Waiting for conversion to complete
+    unsigned result = (unsigned)((ADRESH << 8) + ADRESL);
+    return result;    
+}
 
 void sensorPing();
 {
     printf("to be replaced for the ping sensoring");
+    while(PORTCbits.RC6 == 1)
+    {
+        
+    }
+    TRISC = 0b01000000;
+    //send the ACK message to the galileo
+    PORTCbits.RC2 = 0;
+    PORTCbits.RC3 = 1;
+    PORTCbits.RC4 = 1;
+    PORTCbits.RC5 = 1;
 }
 
+void sendADCResults()
+{
+    unsigned results;
+    while(PORTCbits.RC6 == 1)
+    {
+        
+    }
+    TRISC = 0b01000000;
+    //send the ACK message to the galileo
+    PORTCbits.RC2 = 0;
+    PORTCbits.RC3 = 1;
+    PORTCbits.RC4 = 1;
+    PORTCbits.RC5 = 1;
+    results = ADC_conversion_results();
+    //???????
+}
 
 // Main program
 void main (void)
 {
-    unsigned char msg;    
+    unsigned char msg; 
+    ADC_Init();
+    TRISA &= !0x01; //make sure portA0 is ouput for the LED
     while(1)
     {  
     msg=receive_msg();
@@ -219,7 +290,7 @@ void main (void)
         sensorPing();
     else if (msg == MSG_GET)
     {
-        
+        sendADCResults();
     }
     else if (msg == MSG_TURN30)
         servoRotate30();   
@@ -228,7 +299,7 @@ void main (void)
     else if (msg == MSG_TURN120)
         servoRotate120();
     else
-        PORTCbits.RC0 = 0;
+        
     } 
 }
 
