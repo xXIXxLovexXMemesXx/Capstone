@@ -375,6 +375,7 @@ int main(void)
     other stuff?))*/
 
         int input;
+        int scanf_test;
         do{
             printf("Select a number for desired action: \n\n");
             printf("1. Reset\n");
@@ -385,37 +386,37 @@ int main(void)
             printf("6. Turn Servo 120 degrees\n");
             printf("7. Exit\n");
 
-            scanf("%s", input);
+            //check for input. If ipmroperly formatted,
+            //  set input to 0 to prompt user to input again
+            scanf_test = scanf("%d", &input);
+            if(scanf_test == 0)
+                input = 0;
 
             switch (input)
             {
-                case '1' :
-                reset();
-                break;
-                case '2'  :
-                ping();
-                break;
-                case '3'  :
-                adc_value();
-                break;
-                case '4'  :
-                servo_30();
-                break;
-                case '5'  :
-                servo_90();
-                break;
-                case '6'  :
-                servo_120();
+                case 1 :
+                    reset();
+                    break;
+                case 2  :
+                    ping();
+                    break;
+                case 3  :
+                    adc_value();
+                    break;
+                case 4  :
+                    servo_30();
+                    break;
+                case 5  :
+                    servo_90();
+                    break;
+                case 6  :
+                    servo_120();
+                    break;
                 default :
-                printf("Please enter a valid number (1 - 6)\n");
-                break;
+                    printf("Please enter a valid number (1 - 6)\n");
+                    break;
             }
-        }while(1); /// probably incorrect
-
-           //3.Strobe low because Galileo is done writing to the bus
-        writeGPIO(fileHandleGPIO_S, LOW);
-           //4.Strobe high
-        writeGPIO(fileHandleGPIO_S, HIGH);
+        }while(input != 7); 
     }
 }
 
