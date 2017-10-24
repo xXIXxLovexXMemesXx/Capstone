@@ -129,7 +129,7 @@ unsigned char receive_msg()
     {
         
     }
-    While(PORTCbits.RC6 == 1)
+    while(PORTCbits.RC6 == 1)
     {
         if(PORTCbits.RC5 == 0 && 
            PORTCbits.RC4 == 0 &&
@@ -243,7 +243,7 @@ unsigned int ADC_conversion_results() {
     return result;    
 }
 
-void sensorPing();
+void sensorPing()
 {
     printf("to be replaced for the ping sensoring");
     while(PORTCbits.RC6 == 1)
@@ -299,7 +299,7 @@ void main (void)
     else if (msg == MSG_TURN120)
         servoRotate120();
     else
-        
+        (void) 0;
     } 
 }
 
