@@ -359,11 +359,6 @@ int main(void)
     The data lines are also set LOW (lines 99-102) to assure that
     they aren't sending any data */ 
     
-    testGPIOWriteNibble(fileHandleGPIO_S,
-                            fileHandleGPIO_4,
-                            fileHandleGPIO_5,
-                            fileHandleGPIO_6,
-                            fileHandleGPIO_7);
     while(1)
     {
     /*For line 106, I'm not sure what the best way to handle 
@@ -488,7 +483,7 @@ void adc_value()
                                     fileHandleGPIO_6,
                                     fileHandleGPIO_7,
                                     fileHandleGPIO_S);
-            adc_value += (unsigned receive_msg) << i;
+            adc_value += ((unsigned) receive_msg) << i;
             usleep(30);
         }
         //expect one last ACK message
