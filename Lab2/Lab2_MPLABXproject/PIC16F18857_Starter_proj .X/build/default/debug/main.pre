@@ -17422,7 +17422,7 @@ void SYSTEM_Initialize(void);
 # 80
 void OSCILLATOR_Initialize(void);
 
-# 22 "main.c"
+# 24 "main.c"
 void servoRotate0()
 {
 unsigned int i;
@@ -17437,6 +17437,7 @@ _delay((unsigned long)((18.5)*(1000000/4000.0)));
 
 void servoRotate30()
 {
+printf("Delay me just a little bit\n");
 while(PORTCbits.RC6 == 1)
 {
 
@@ -17459,6 +17460,7 @@ _delay((unsigned long)((18.33)*(1000000/4000.0)));
 
 void servoRotate90()
 {
+printf("REEEEEEEEEEEEEEEEEEEEEEE\n");
 while(PORTCbits.RC6 == 1)
 {
 
@@ -17481,6 +17483,7 @@ _delay((unsigned long)((18)*(1000000/4000.0)));
 
 void servoRotate120()
 {
+printf("Delay me just a little bit\n");
 while(PORTCbits.RC6 == 1)
 {
 
@@ -17505,7 +17508,7 @@ _delay((unsigned long)((18.67)*(1000000/4000.0)));
 void set_receive()
 {
 
-# 107
+# 112
 ANSELC = 0;
 PORTC = 0;
 TRISC = 0b11101100;
@@ -17564,10 +17567,12 @@ PORTCbits.RC2 == 1)
 {
 results = 0x5;
 }
+else
+return results = 0xF;
 }
 return results;
 
-# 174
+# 181
 }
 
 void sensorReset()
@@ -17588,7 +17593,7 @@ servoRotate0();
 }
 void ADC_Init(void) {
 
-# 209
+# 216
 TRISA = 0b11111110;
 TRISAbits.TRISA1 = 1;
 ANSELAbits.ANSA1 = 1;
@@ -17621,7 +17626,7 @@ return result;
 void sensorPing()
 {
 printf("PING\n");
-PORTA = 1;
+PORTA ^= 1;
 while(PORTCbits.RC6 == 1)
 {
 
@@ -17632,25 +17637,90 @@ PORTCbits.RC2 = 0;
 PORTCbits.RC1 = 1;
 PORTCbits.RC7 = 1;
 PORTCbits.RC5 = 1;
-PORTA = 0;
+
 }
 
 void sendADCResults()
 {
+printf(";)\n");
 unsigned results;
+unsigned char nib1, nib2, nib3;
+
+results = ADC_conversion_results();
+nib1 = (results & 0x300) >> 8;
+nib2 = (results & 0x0F0) >> 4;
+nib3 = (results & 0x00F);
+
+
 while(PORTCbits.RC6 == 1)
 {
 
 }
-results = ADC_conversion_results();
+
+
+
+PORTCbits.RC2 = (nib1 & 0x1);
+PORTCbits.RC1 = (nib1 & 0x2) >>1;
+PORTCbits.RC7 = 0;
+PORTCbits.RC5 = 0;
+
+
+while(PORTCbits.RC6 == 0)
+{
 
 }
+
+
+while(PORTCbits.RC6 == 1)
+{
+
+}
+
+PORTCbits.RC2 = (nib2 & 0x1);
+PORTCbits.RC1 = (nib2 & 0x2) >>1;
+PORTCbits.RC7 = (nib2 & 0x4) >> 2;
+PORTCbits.RC5 = (nib2 & 0x8) >> 3;
+
+
+while(PORTCbits.RC6 == 0)
+{
+
+}
+
+
+while(PORTCbits.RC6 == 1)
+{
+
+}
+
+PORTCbits.RC2 = (nib3 & 0x1);
+PORTCbits.RC1 = (nib3 & 0x2) >>1;
+PORTCbits.RC7 = (nib3 & 0x4) >> 2;
+PORTCbits.RC5 = (nib3 & 0x8) >> 3;
+
+
+while(PORTCbits.RC6 == 0)
+{
+
+}
+
+
+while(PORTCbits.RC6 == 1)
+{
+
+}
+PORTCbits.RC2 = 0;
+PORTCbits.RC1 = 1;
+PORTCbits.RC7 = 1;
+PORTCbits.RC5 = 1;
+}
+
 
 
 void main (void)
 {
 SYSTEM_Initialize();
-
+unsigned results;
 
 unsigned char msg;
 TRISB = 0;
@@ -17659,6 +17729,11 @@ printf("Starting main\n");
 TRISAbits.TRISA0 = 0;
 while(1)
 {
+results = ADC_conversion_results();
+if(results > 0x0380)
+PORTA |= 0x01;
+else
+PORTA &= !0x01;
 msg=receive_msg();
 if(msg == 0x0)
 sensorReset();

@@ -17498,9 +17498,9 @@ PORTCbits.RC5 = 1;
 for(i=0;i<50;i++)
 {
 PORTB = 1;
-_delay((unsigned long)((1.33)*(1000000/4000.0)));
+_delay((unsigned long)((1.1)*(1000000/4000.0)));
 PORTB = 0;
-_delay((unsigned long)((18.67)*(1000000/4000.0)));
+_delay((unsigned long)((18.9)*(1000000/4000.0)));
 }
 
 }
@@ -17570,9 +17570,17 @@ results = 0x5;
 else
 results = 0xF;
 }
+while( PORTCbits.RC6 == 1)
+{
+
+}
+while(PORTCbits.RC6 == 0)
+{
+
+}
 return results;
 
-# 181
+# 189
 }
 
 void sensorReset()
@@ -17593,7 +17601,7 @@ servoRotate0();
 }
 void ADC_Init(void) {
 
-# 216
+# 224
 TRISA = 0b11111110;
 TRISAbits.TRISA1 = 1;
 ANSELAbits.ANSA1 = 1;
@@ -17626,11 +17634,12 @@ return result;
 void sensorPing()
 {
 printf("PING\n");
-PORTA ^= 1;
+
 while(PORTCbits.RC6 == 1)
 {
 
 }
+
 TRISC = 0b01000000;
 
 PORTCbits.RC2 = 0;
@@ -17638,6 +17647,18 @@ PORTCbits.RC1 = 1;
 PORTCbits.RC7 = 1;
 PORTCbits.RC5 = 1;
 
+while(PORTCbits.RC6 == 0)
+{
+
+}
+while(PORTCbits.RC6 == 1)
+{
+
+}
+while(PORTCbits.RC6 == 0)
+{
+
+}
 }
 
 void sendADCResults()
@@ -17651,19 +17672,34 @@ nib1 = (results & 0x300) >> 8;
 nib2 = (results & 0x0F0) >> 4;
 nib3 = (results & 0x00F);
 
+while(PORTCbits.RC6 == 0)
+{
+
+}
 
 while(PORTCbits.RC6 == 1)
 {
 
 }
 
-
+TRISC = 0b01000000;
 
 PORTCbits.RC2 = (nib1 & 0x1);
 PORTCbits.RC1 = (nib1 & 0x2) >>1;
 PORTCbits.RC7 = 0;
 PORTCbits.RC5 = 0;
 
+
+while(PORTCbits.RC6 == 0)
+{
+
+}
+
+
+while(PORTCbits.RC6 == 1)
+{
+
+}
 
 while(PORTCbits.RC6 == 0)
 {
@@ -17693,6 +17729,17 @@ while(PORTCbits.RC6 == 1)
 
 }
 
+while(PORTCbits.RC6 == 0)
+{
+
+}
+
+
+while(PORTCbits.RC6 == 1)
+{
+
+}
+
 PORTCbits.RC2 = (nib3 & 0x1);
 PORTCbits.RC1 = (nib3 & 0x2) >>1;
 PORTCbits.RC7 = (nib3 & 0x4) >> 2;
@@ -17709,10 +17756,39 @@ while(PORTCbits.RC6 == 1)
 {
 
 }
+
+
+while(PORTCbits.RC6 == 0)
+{
+
+}
+
+
+while(PORTCbits.RC6 == 1)
+{
+
+}
 PORTCbits.RC2 = 0;
 PORTCbits.RC1 = 1;
 PORTCbits.RC7 = 1;
 PORTCbits.RC5 = 1;
+
+
+while(PORTCbits.RC6 == 0)
+{
+
+}
+
+while(PORTCbits.RC6 == 1)
+{
+
+}
+
+
+while(PORTCbits.RC6 == 0)
+{
+
+}
 }
 
 

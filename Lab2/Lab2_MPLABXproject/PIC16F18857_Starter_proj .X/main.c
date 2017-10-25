@@ -96,9 +96,9 @@ void servoRotate120() //120 Degree
   for(i=0;i<50;i++)
   {
     PORTB = 1;
-    __delay_ms(1.33);
+    __delay_ms(1.1);
     PORTB = 0;
-    __delay_ms(18.67);
+    __delay_ms(18.9);
   }
   
 }
@@ -169,6 +169,14 @@ unsigned char receive_msg()
         }
         else
             results = 0xF;
+    }
+    while( PORTCbits.RC6 == 1) 
+    {
+        
+    }
+    while(PORTCbits.RC6 == 0)
+    {
+        
     }
     return results;
  /* 1.wait strobe high
@@ -245,11 +253,12 @@ unsigned int ADC_conversion_results() {
 void sensorPing()
 {
     printf("PING\n");
-    PORTA ^= 1;
+    //PORTA ^= 1;
     while(PORTCbits.RC6 == 1)
     {
         
     }
+    
     TRISC = 0b01000000;
     //send the ACK message to the galileo
     PORTCbits.RC2 = 0;
@@ -257,6 +266,18 @@ void sensorPing()
     PORTCbits.RC7 = 1;
     PORTCbits.RC5 = 1;
     //PORTA = 0;
+    while(PORTCbits.RC6 == 0)
+    {
+        
+    }
+    while(PORTCbits.RC6 == 1)
+    {
+        
+    }
+    while(PORTCbits.RC6 == 0)
+    {
+        
+    }
 }
 
 void sendADCResults()
@@ -269,14 +290,18 @@ void sendADCResults()
     nib1 = (results & 0x300) >> 8;
     nib2 = (results & 0x0F0) >> 4;
     nib3 = (results & 0x00F);
-    
+    //only start when the bus is high
+    while(PORTCbits.RC6 == 0)
+    {
+        
+    }
     //waits for the bus to go low
     while(PORTCbits.RC6 == 1)
     {
         
     } 
     
-    
+    TRISC = 0b01000000;
     //send the first nibble
     PORTCbits.RC2 = (nib1 & 0x1);
     PORTCbits.RC1 = (nib1 & 0x2) >>1;
@@ -290,6 +315,17 @@ void sendADCResults()
     } 
     
     //wait for strobe to go low again
+    while(PORTCbits.RC6 == 1)
+    {
+        
+    } 
+    //wait for the bus to go high again - end the write
+    while(PORTCbits.RC6 == 0)
+    {
+        
+    } 
+    
+    //start the second write when bus goes low
     while(PORTCbits.RC6 == 1)
     {
         
@@ -311,6 +347,17 @@ void sendADCResults()
     {
         
     } 
+    //bus goes high, end the write
+    while(PORTCbits.RC6 == 0)
+    {
+        
+    } 
+    
+    //wait for strobe to go low again to start third write
+    while(PORTCbits.RC6 == 1)
+    {
+        
+    } 
     //send the third nibble.
     PORTCbits.RC2 = (nib3 & 0x1);
     PORTCbits.RC1 = (nib3 & 0x2) >>1;
@@ -328,10 +375,39 @@ void sendADCResults()
     {
         
     }
+    
+    //wait for strobe to go high again END
+    while(PORTCbits.RC6 == 0)
+    {
+        
+    }
+    
+    //wait for strobe to go low again - WRITE ACK
+    while(PORTCbits.RC6 == 1)
+    {
+        
+    }
     PORTCbits.RC2 = 0;
     PORTCbits.RC1 = 1;
     PORTCbits.RC7 = 1;
     PORTCbits.RC5 = 1;
+    
+    //wait to go high - G reads the ACK
+    while(PORTCbits.RC6 == 0) 
+    {
+        
+    }
+    //wait to go low - G done reading
+    while(PORTCbits.RC6 == 1) 
+    {
+        
+    }
+    
+        //wait to go high - G is DONE
+    while(PORTCbits.RC6 == 0) 
+    {
+        
+    }
 }
 
 // Main program
