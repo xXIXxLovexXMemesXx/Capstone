@@ -17429,9 +17429,9 @@ unsigned int i;
 for(i=0;i<50;i++)
 {
 PORTB = 1;
-_delay((unsigned long)((1)*(1000000/4000.0)));
+_delay((unsigned long)((1.5)*(1000000/4000.0)));
 PORTB = 0;
-_delay((unsigned long)((19)*(1000000/4000.0)));
+_delay((unsigned long)((18.5)*(1000000/4000.0)));
 }
 }
 
@@ -17441,19 +17441,19 @@ while(PORTCbits.RC6 == 1)
 {
 
 }
+unsigned int i;
 TRISC = 0b01000000;
 
 PORTCbits.RC2 = 0;
-PORTCbits.RC3 = 1;
+PORTCbits.RC1 = 1;
 PORTCbits.RC7 = 1;
 PORTCbits.RC5 = 1;
-unsigned int i;
 for(i=0;i<50;i++)
 {
 PORTB = 1;
-_delay((unsigned long)((1.18)*(1000000/4000.0)));
+_delay((unsigned long)((1.67)*(1000000/4000.0)));
 PORTB = 0;
-_delay((unsigned long)((18.82)*(1000000/4000.0)));
+_delay((unsigned long)((18.33)*(1000000/4000.0)));
 }
 }
 
@@ -17463,19 +17463,19 @@ while(PORTCbits.RC6 == 1)
 {
 
 }
+unsigned int i;
 TRISC = 0b01000000;
 
 PORTCbits.RC2 = 0;
-PORTCbits.RC3 = 1;
+PORTCbits.RC1 = 1;
 PORTCbits.RC7 = 1;
 PORTCbits.RC5 = 1;
-unsigned int i;
 for(i=0;i<50;i++)
 {
 PORTB = 1;
-_delay((unsigned long)((1.5)*(1000000/4000.0)));
+_delay((unsigned long)((2)*(1000000/4000.0)));
 PORTB = 0;
-_delay((unsigned long)((18.5)*(1000000/4000.0)));
+_delay((unsigned long)((18)*(1000000/4000.0)));
 }
 }
 
@@ -17485,19 +17485,19 @@ while(PORTCbits.RC6 == 1)
 {
 
 }
+unsigned int i;
 TRISC = 0b01000000;
 
 PORTCbits.RC2 = 0;
-PORTCbits.RC3 = 1;
+PORTCbits.RC1 = 1;
 PORTCbits.RC7 = 1;
 PORTCbits.RC5 = 1;
-unsigned int i;
 for(i=0;i<50;i++)
 {
 PORTB = 1;
-_delay((unsigned long)((1.68)*(1000000/4000.0)));
+_delay((unsigned long)((1.33)*(1000000/4000.0)));
 PORTB = 0;
-_delay((unsigned long)((18.32)*(1000000/4000.0)));
+_delay((unsigned long)((18.67)*(1000000/4000.0)));
 }
 
 }
@@ -17515,50 +17515,51 @@ unsigned char receive_msg()
 {
 set_receive();
 unsigned char results;
-while(PORTCbits.RC6 == 0)
+while(PORTCbits.RC6 == 1)
 {
 
 }
-while(PORTCbits.RC6 == 1)
+
+while(PORTCbits.RC6 == 0)
 {
 if(PORTCbits.RC5 == 0 &&
 PORTCbits.RC7 == 0 &&
-PORTCbits.RC3 == 0 &&
+PORTCbits.RC1 == 0 &&
 PORTCbits.RC2 == 0)
 {
 results = 0x0;
 }
 else if(PORTCbits.RC5 == 0 &&
 PORTCbits.RC7 == 0 &&
-PORTCbits.RC3 == 0 &&
+PORTCbits.RC1 == 0 &&
 PORTCbits.RC2 == 1)
 {
 results = 0x1;
 }
 else if(PORTCbits.RC5 == 0 &&
 PORTCbits.RC7 == 0 &&
-PORTCbits.RC3 == 1 &&
+PORTCbits.RC1 == 1 &&
 PORTCbits.RC2 == 0)
 {
 results = 0x2;
 }
 else if(PORTCbits.RC5 == 0 &&
 PORTCbits.RC7 == 0 &&
-PORTCbits.RC3 == 1 &&
+PORTCbits.RC1 == 1 &&
 PORTCbits.RC2 == 1)
 {
 results = 0x3;
 }
 else if(PORTCbits.RC5 == 0 &&
 PORTCbits.RC7 == 1 &&
-PORTCbits.RC3 == 0 &&
+PORTCbits.RC1 == 0 &&
 PORTCbits.RC2 == 0)
 {
 results = 0x4;
 }
 else if(PORTCbits.RC5 == 0 &&
 PORTCbits.RC7 == 1 &&
-PORTCbits.RC3 == 0 &&
+PORTCbits.RC1 == 0 &&
 PORTCbits.RC2 == 1)
 {
 results = 0x5;
@@ -17566,7 +17567,7 @@ results = 0x5;
 }
 return results;
 
-# 173
+# 174
 }
 
 void sensorReset()
@@ -17579,7 +17580,7 @@ while(PORTCbits.RC6 == 1)
 TRISC = 0b01000000;
 
 PORTCbits.RC2 = 0;
-PORTCbits.RC3 = 1;
+PORTCbits.RC1 = 1;
 PORTCbits.RC7 = 1;
 PORTCbits.RC5 = 1;
 
@@ -17587,7 +17588,7 @@ servoRotate0();
 }
 void ADC_Init(void) {
 
-# 208
+# 209
 TRISA = 0b11111110;
 TRISAbits.TRISA1 = 1;
 ANSELAbits.ANSA1 = 1;
@@ -17602,6 +17603,9 @@ ADCON0 = 0b10000100;
 ADREF = 0;
 ADPCH = 0b00000001;
 
+TX1STA = 0b00100000;
+RC1STA = 0b10000000;
+printf("Initialized ADC\n");
 }
 
 unsigned int ADC_conversion_results() {
@@ -17616,7 +17620,8 @@ return result;
 
 void sensorPing()
 {
-printf("to be replaced for the ping sensoring");
+printf("PING\n");
+PORTA = 1;
 while(PORTCbits.RC6 == 1)
 {
 
@@ -17624,9 +17629,10 @@ while(PORTCbits.RC6 == 1)
 TRISC = 0b01000000;
 
 PORTCbits.RC2 = 0;
-PORTCbits.RC3 = 1;
+PORTCbits.RC1 = 1;
 PORTCbits.RC7 = 1;
 PORTCbits.RC5 = 1;
+PORTA = 0;
 }
 
 void sendADCResults()
@@ -17636,12 +17642,6 @@ while(PORTCbits.RC6 == 1)
 {
 
 }
-TRISC = 0b01000000;
-
-PORTCbits.RC2 = 0;
-PORTCbits.RC3 = 1;
-PORTCbits.RC7 = 1;
-PORTCbits.RC5 = 1;
 results = ADC_conversion_results();
 
 }
@@ -17649,10 +17649,14 @@ results = ADC_conversion_results();
 
 void main (void)
 {
+SYSTEM_Initialize();
+
+
 unsigned char msg;
 TRISB = 0;
 ADC_Init();
-TRISA &= !0x01;
+printf("Starting main\n");
+TRISAbits.TRISA0 = 0;
 while(1)
 {
 msg=receive_msg();

@@ -13,7 +13,7 @@
 [v _eecpymem eecpymem `(v  1 e 1 0 ]
 "39
 [v _memcpyee memcpyee `(v  1 e 1 0 ]
-"22 C:\Users\students\Documents\micro2\Lab1\Lab1_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
+"22 C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
 [v _servoRotate0 servoRotate0 `(v  1 e 1 0 ]
 "34
 [v _servoRotate30 servoRotate30 `(v  1 e 1 0 ]
@@ -25,19 +25,19 @@
 [v _set_receive set_receive `(v  1 e 1 0 ]
 "112
 [v _receive_msg receive_msg `(uc  1 e 1 0 ]
-"175
+"176
 [v _sensorReset sensorReset `(v  1 e 1 0 ]
-"191
+"192
 [v _ADC_Init ADC_Init `(v  1 e 1 0 ]
-"224
+"228
 [v _ADC_conversion_results ADC_conversion_results `(ui  1 e 2 0 ]
-"234
+"238
 [v _sensorPing sensorPing `(v  1 e 1 0 ]
-"249
+"255
 [v _sendADCResults sendADCResults `(v  1 e 1 0 ]
 "267
 [v _main main `(v  1 e 1 0 ]
-"55 C:\Users\students\Documents\micro2\Lab1\Lab1_MPLABXproject\PIC16F18857_Starter_proj .X\mcc_generated_files/eusart.c
+"55 C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\mcc_generated_files/eusart.c
 [v _EUSART_Initialize EUSART_Initialize `(v  1 e 1 0 ]
 "77
 [v _EUSART_Read EUSART_Read `(uc  1 e 1 0 ]
@@ -45,11 +45,15 @@
 [v _EUSART_Write EUSART_Write `(v  1 e 1 0 ]
 "111
 [v _putch putch `(v  1 e 1 0 ]
-"90 C:\Users\students\Documents\micro2\Lab1\Lab1_MPLABXproject\PIC16F18857_Starter_proj .X\mcc_generated_files/mcc.c
+"82 C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\mcc_generated_files/mcc.c
+[v _SYSTEM_Initialize SYSTEM_Initialize `(v  1 e 1 0 ]
+"90
 [v _OSCILLATOR_Initialize OSCILLATOR_Initialize `(v  1 e 1 0 ]
-"50 C:\Users\students\Documents\micro2\Lab1\Lab1_MPLABXproject\PIC16F18857_Starter_proj .X\mcc_generated_files/pin_manager.c
+"50 C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\mcc_generated_files/pin_manager.c
 [v _PIN_MANAGER_Initialize PIN_MANAGER_Initialize `(v  1 e 1 0 ]
-"450 C:\Program Files (x86)\Microchip\xc8\v1.42\include\pic16f18857.h
+"388 C:\Program Files (x86)\Microchip\xc8\v1.42\include\pic16f18857.h
+[v _PORTA PORTA `VEuc  1 e 1 @12 ]
+"450
 [v _PORTB PORTB `VEuc  1 e 1 @13 ]
 "512
 [v _PORTC PORTC `VEuc  1 e 1 @14 ]
@@ -203,38 +207,38 @@
 "36565
 "36565
 [v _GIE GIE `VEb  1 e 0 @95 ]
-"267 C:\Users\students\Documents\micro2\Lab1\Lab1_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
+"267 C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
 [v _main main `(v  1 e 1 0 ]
 {
-"269
+"272
 [v main@msg msg `uc  1 a 1 10 ]
-"293
+"297
 } 0
 "56
 [v _servoRotate90 servoRotate90 `(v  1 e 1 0 ]
 {
-"68
+"62
 [v servoRotate90@i i `ui  1 a 2 1 ]
 "76
 } 0
 "34
 [v _servoRotate30 servoRotate30 `(v  1 e 1 0 ]
 {
-"46
+"40
 [v servoRotate30@i i `ui  1 a 2 1 ]
 "54
 } 0
 "78
 [v _servoRotate120 servoRotate120 `(v  1 e 1 0 ]
 {
-"90
+"84
 [v servoRotate120@i i `ui  1 a 2 1 ]
 "99
 } 0
-"175
+"176
 [v _sensorReset sensorReset `(v  1 e 1 0 ]
 {
-"190
+"191
 } 0
 "22
 [v _servoRotate0 servoRotate0 `(v  1 e 1 0 ]
@@ -243,10 +247,63 @@
 [v servoRotate0@i i `ui  1 a 2 1 ]
 "32
 } 0
-"234
+"238
 [v _sensorPing sensorPing `(v  1 e 1 0 ]
 {
-"247
+"253
+} 0
+"255
+[v _sendADCResults sendADCResults `(v  1 e 1 0 ]
+{
+"257
+[v sendADCResults@results results `ui  1 a 2 4 ]
+"264
+} 0
+"228
+[v _ADC_conversion_results ADC_conversion_results `(ui  1 e 2 0 ]
+{
+"234
+[v ADC_conversion_results@result result `ui  1 a 2 2 ]
+"236
+} 0
+"112
+[v _receive_msg receive_msg `(uc  1 e 1 0 ]
+{
+"115
+[v receive_msg@results results `uc  1 a 1 1 ]
+"174
+} 0
+"101
+[v _set_receive set_receive `(v  1 e 1 0 ]
+{
+"110
+} 0
+"82 C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\mcc_generated_files/mcc.c
+[v _SYSTEM_Initialize SYSTEM_Initialize `(v  1 e 1 0 ]
+{
+"88
+} 0
+"50 C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\mcc_generated_files/pin_manager.c
+[v _PIN_MANAGER_Initialize PIN_MANAGER_Initialize `(v  1 e 1 0 ]
+{
+"68
+[v PIN_MANAGER_Initialize@state state `uc  1 a 1 0 ]
+"85
+} 0
+"90 C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\mcc_generated_files/mcc.c
+[v _OSCILLATOR_Initialize OSCILLATOR_Initialize `(v  1 e 1 0 ]
+{
+"106
+} 0
+"55 C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\mcc_generated_files/eusart.c
+[v _EUSART_Initialize EUSART_Initialize `(v  1 e 1 0 ]
+{
+"74
+} 0
+"192 C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
+[v _ADC_Init ADC_Init `(v  1 e 1 0 ]
+{
+"226
 } 0
 "464 C:\Program Files (x86)\Microchip\xc8\v1.42\sources\common\doprnt.c
 [v _printf printf `(i  1 e 2 0 ]
@@ -259,7 +316,7 @@
 [v printf@f f `*.25DCCuc  1 p 2 2 ]
 "1541
 } 0
-"111 C:\Users\students\Documents\micro2\Lab1\Lab1_MPLABXproject\PIC16F18857_Starter_proj .X\mcc_generated_files/eusart.c
+"111 C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\mcc_generated_files/eusart.c
 [v _putch putch `(v  1 e 1 0 ]
 {
 [v putch@txData txData `uc  1 a 1 wreg ]
@@ -275,35 +332,4 @@
 [v EUSART_Write@txData txData `uc  1 a 1 wreg ]
 [v EUSART_Write@txData txData `uc  1 a 1 0 ]
 "104
-} 0
-"249 C:\Users\students\Documents\micro2\Lab1\Lab1_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
-[v _sendADCResults sendADCResults `(v  1 e 1 0 ]
-{
-"251
-[v sendADCResults@results results `ui  1 a 2 4 ]
-"264
-} 0
-"224
-[v _ADC_conversion_results ADC_conversion_results `(ui  1 e 2 0 ]
-{
-"230
-[v ADC_conversion_results@result result `ui  1 a 2 2 ]
-"232
-} 0
-"112
-[v _receive_msg receive_msg `(uc  1 e 1 0 ]
-{
-"115
-[v receive_msg@results results `uc  1 a 1 1 ]
-"173
-} 0
-"101
-[v _set_receive set_receive `(v  1 e 1 0 ]
-{
-"110
-} 0
-"191
-[v _ADC_Init ADC_Init `(v  1 e 1 0 ]
-{
-"222
 } 0

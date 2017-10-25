@@ -14,45 +14,15 @@
 /* Circuit Connections
    Signal STROBE   RC6
    Signal D0       RC2
-   Signal D1       RC3
-   Signal D2       RC4
+   Signal D1       RC1
+   Signal D2       RC7
    Signal D3       RC5
+ * 
+ * Analog - RA1
  */
 
 void servoRotate0() //0 Degree -> reset servo position
 {
-  unsigned int i;
-  for(i=0;i<50;i++)
-  {
-    PORTB = 1;
-    __delay_ms(1);
-    PORTB = 0;
-    __delay_ms(19);
-  }
-}
-
-void servoRotate30() //30 Degree
-{
-  while(PORTCbits.RC6 == 1)
-  {
-        
-  }  
-  unsigned int i;
-  for(i=0;i<50;i++)
-  {
-    PORTB = 1;
-    __delay_ms(1.18);
-    PORTB = 0;
-    __delay_ms(18.82);
-  }
-}
-
-void servoRotate90() //90 Degree
-{
-  while(PORTCbits.RC6 == 1)
-  {
-        
-  } 
   unsigned int i;
   for(i=0;i<50;i++)
   {
@@ -63,19 +33,72 @@ void servoRotate90() //90 Degree
   }
 }
 
+void servoRotate30() //30 Degree
+{
+  printf("Delay me just a little bit\n");
+  while(PORTCbits.RC6 == 1)
+  {
+        
+  }  
+  unsigned int i;
+  TRISC = 0b01000000;
+    //send the ACK message to the galileo
+    PORTCbits.RC2 = 0;
+    PORTCbits.RC1 = 1;
+    PORTCbits.RC7 = 1;
+    PORTCbits.RC5 = 1;
+  for(i=0;i<50;i++)
+  {
+    PORTB = 1;
+    __delay_ms(1.67);
+    PORTB = 0;
+    __delay_ms(18.33);
+  }
+}
+
+void servoRotate90() //90 Degree
+{
+  printf("REEEEEEEEEEEEEEEEEEEEEEE\n");
+  while(PORTCbits.RC6 == 1)
+  {
+        
+  } 
+  unsigned int i;
+  TRISC = 0b01000000;
+    //send the ACK message to the galileo
+    PORTCbits.RC2 = 0;
+    PORTCbits.RC1 = 1;
+    PORTCbits.RC7 = 1;
+    PORTCbits.RC5 = 1;
+  for(i=0;i<50;i++)
+  {
+    PORTB = 1;
+    __delay_ms(2);
+    PORTB = 0;
+    __delay_ms(18);
+  }
+}
+
 void servoRotate120() //120 Degree
 {
+  printf("Delay me just a little bit\n");
   while(PORTCbits.RC6 == 1)
   {
         
   }
   unsigned int i;
+  TRISC = 0b01000000;
+    //send the ACK message to the galileo
+    PORTCbits.RC2 = 0;
+    PORTCbits.RC1 = 1;
+    PORTCbits.RC7 = 1;
+    PORTCbits.RC5 = 1;
   for(i=0;i<50;i++)
   {
     PORTB = 1;
-    __delay_ms(1.68);
+    __delay_ms(1.33);
     PORTB = 0;
-    __delay_ms(18.32);
+    __delay_ms(18.67);
   }
   
 }
@@ -144,6 +167,8 @@ unsigned char receive_msg()
         {
             results = 0x5;
         }
+        else
+            results = 0xF;
     }
     return results;
  /* 1.wait strobe high
@@ -162,7 +187,12 @@ void sensorReset()
     {
         
     }
-
+    TRISC = 0b01000000;
+    //send the ACK message to the galileo
+    PORTCbits.RC2 = 0;
+    PORTCbits.RC1 = 1;
+    PORTCbits.RC7 = 1;
+    PORTCbits.RC5 = 1;
     //reset the servo position
     servoRotate0();
 }
@@ -182,7 +212,7 @@ void ADC_Init(void)  {
  // 11. ADC channel - Analog Input
  // 12. Set ADC result alignment, Enable ADC module, Clock Selection Bit, Disable ADC Continuous Operation, Keep ADC inactive
   
- 
+    
     TRISA = 0b11111110;   //set PORTA to input except for pin0
     TRISAbits.TRISA1 = 1;   //set pin A1 to input
     ANSELAbits.ANSA1 = 1;   //set as analog input
@@ -193,10 +223,13 @@ void ADC_Init(void)  {
     ADSTAT = 0;
     ADCAP = 0;
     ADPRE = 0;
-    ADCON0 = 0b10000100; 
+    ADCON0 = 0b10000100; // bit7 = enabled; bit 2 = 1: right justified
     ADREF = 0;
-    ADPCH = 0b00000001;
-            
+    ADPCH = 0b00000001; //set input to A1
+    //UART initialization
+    TX1STA = 0b00100000;
+    RC1STA = 0b10000000;   
+    printf("Initialized ADC\n");
 } 
 
 unsigned int ADC_conversion_results() {  
@@ -205,41 +238,121 @@ unsigned int ADC_conversion_results() {
     ADCON0 |= 1;           //Initializes A/D conversion
     
     while(ADCON0 & 1);             //Waiting for conversion to complete
-    unsigned result = (unsigned)((ADRESH << 8) + ADRESL);
+    unsigned result = (unsigned)((ADRESH << 8) + ADRESL); //0bXXXXXXHHLLLLLLLL
     return result;    
 }
 
 void sensorPing()
 {
-    PORTA = 1;
+    printf("PING\n");
+    PORTA ^= 1;
     while(PORTCbits.RC6 == 1)
     {
         
     }
-    PORTA = 0;
+    TRISC = 0b01000000;
+    //send the ACK message to the galileo
+    PORTCbits.RC2 = 0;
+    PORTCbits.RC1 = 1;
+    PORTCbits.RC7 = 1;
+    PORTCbits.RC5 = 1;
+    //PORTA = 0;
 }
 
 void sendADCResults()
 {
+    printf(";)\n");
     unsigned results;
+    unsigned char nib1, nib2, nib3;
+    //get the ADC value and break it into 3 nibbles
+    results = ADC_conversion_results();
+    nib1 = (results & 0x300) >> 8;
+    nib2 = (results & 0x0F0) >> 4;
+    nib3 = (results & 0x00F);
+    
+    //waits for the bus to go low
+    while(PORTCbits.RC6 == 1)
+    {
+        
+    } 
+    
+    
+    //send the first nibble
+    PORTCbits.RC2 = (nib1 & 0x1);
+    PORTCbits.RC1 = (nib1 & 0x2) >>1;
+    PORTCbits.RC7 = 0;
+    PORTCbits.RC5 = 0;
+    
+    //wait for the bus to go high again
+    while(PORTCbits.RC6 == 0)
+    {
+        
+    } 
+    
+    //wait for strobe to go low again
+    while(PORTCbits.RC6 == 1)
+    {
+        
+    } 
+    //send the second nibble.
+    PORTCbits.RC2 = (nib2 & 0x1);
+    PORTCbits.RC1 = (nib2 & 0x2) >>1;
+    PORTCbits.RC7 = (nib2 & 0x4) >> 2;
+    PORTCbits.RC5 = (nib2 & 0x8) >> 3;
+    
+    //wait for the bus to go high again
+    while(PORTCbits.RC6 == 0)
+    {
+        
+    } 
+    
+    //wait for strobe to go low again
+    while(PORTCbits.RC6 == 1)
+    {
+        
+    } 
+    //send the third nibble.
+    PORTCbits.RC2 = (nib3 & 0x1);
+    PORTCbits.RC1 = (nib3 & 0x2) >>1;
+    PORTCbits.RC7 = (nib3 & 0x4) >> 2;
+    PORTCbits.RC5 = (nib3 & 0x8) >> 3;
+    
+    //wait for the bus to go high again
+    while(PORTCbits.RC6 == 0)
+    {
+        
+    } 
+    
+    //wait for strobe to go low again
     while(PORTCbits.RC6 == 1)
     {
         
     }
-    results = ADC_conversion_results();
-    //???????
+    PORTCbits.RC2 = 0;
+    PORTCbits.RC1 = 1;
+    PORTCbits.RC7 = 1;
+    PORTCbits.RC5 = 1;
 }
 
 // Main program
+#define ADC_THRESHOLD 0x0380
 void main (void)
 {
     SYSTEM_Initialize();
+    unsigned results;
+    
     unsigned char msg; 
     TRISB = 0;
     ADC_Init();
+    printf("Starting main\n");
     TRISAbits.TRISA0 = 0; //make sure portA0 is ouput for the LED
     while(1)
     {  
+    results = ADC_conversion_results();
+    if(results > ADC_THRESHOLD)
+            PORTA |= 0x01; //turn on LEd
+    else
+            PORTA &= !0x01; //turn off LED
     msg=receive_msg();
     if(msg == MSG_RESET)
    	    sensorReset();
@@ -257,12 +370,6 @@ void main (void)
         servoRotate120();
     else
         (void) 0;
-    TRISC = 0b01000000;
-    //send the ACK message to the galileo
-    PORTCbits.RC2 = 0;
-    PORTCbits.RC1 = 1;
-    PORTCbits.RC7 = 1;
-    PORTCbits.RC5 = 1;
     } 
 }
 
