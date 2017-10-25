@@ -13,29 +13,29 @@
 [v _eecpymem eecpymem `(v  1 e 1 0 ]
 "39
 [v _memcpyee memcpyee `(v  1 e 1 0 ]
-"22 C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
+"24 C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
 [v _servoRotate0 servoRotate0 `(v  1 e 1 0 ]
-"34
+"36
 [v _servoRotate30 servoRotate30 `(v  1 e 1 0 ]
-"56
+"59
 [v _servoRotate90 servoRotate90 `(v  1 e 1 0 ]
-"78
+"82
 [v _servoRotate120 servoRotate120 `(v  1 e 1 0 ]
-"101
+"106
 [v _set_receive set_receive `(v  1 e 1 0 ]
-"112
+"117
 [v _receive_msg receive_msg `(uc  1 e 1 0 ]
-"176
+"183
 [v _sensorReset sensorReset `(v  1 e 1 0 ]
-"192
+"199
 [v _ADC_Init ADC_Init `(v  1 e 1 0 ]
-"228
+"235
 [v _ADC_conversion_results ADC_conversion_results `(ui  1 e 2 0 ]
-"238
+"245
 [v _sensorPing sensorPing `(v  1 e 1 0 ]
-"255
+"262
 [v _sendADCResults sendADCResults `(v  1 e 1 0 ]
-"267
+"339
 [v _main main `(v  1 e 1 0 ]
 "55 C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\mcc_generated_files/eusart.c
 [v _EUSART_Initialize EUSART_Initialize `(v  1 e 1 0 ]
@@ -57,7 +57,7 @@
 [v _PORTB PORTB `VEuc  1 e 1 @13 ]
 "512
 [v _PORTC PORTC `VEuc  1 e 1 @14 ]
-[s S139 . 1 `uc 1 RC0 1 0 :1:0 
+[s S144 . 1 `uc 1 RC0 1 0 :1:0 
 `uc 1 RC1 1 0 :1:1 
 `uc 1 RC2 1 0 :1:2 
 `uc 1 RC3 1 0 :1:3 
@@ -67,8 +67,8 @@
 `uc 1 RC7 1 0 :1:7 
 ]
 "529
-[u S148 . 1 `S139 1 . 1 0 ]
-[v _PORTCbits PORTCbits `VES148  1 e 1 @14 ]
+[u S153 . 1 `S144 1 . 1 0 ]
+[v _PORTCbits PORTCbits `VES153  1 e 1 @14 ]
 "595
 [v _TRISA TRISA `VEuc  1 e 1 @17 ]
 [s S169 . 1 `uc 1 TRISA0 1 0 :1:0 
@@ -207,76 +207,82 @@
 "36565
 "36565
 [v _GIE GIE `VEb  1 e 0 @95 ]
-"267 C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
+"339 C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
 [v _main main `(v  1 e 1 0 ]
 {
-"272
-[v main@msg msg `uc  1 a 1 10 ]
-"297
+"342
+[v main@results results `ui  1 a 2 5 ]
+"344
+[v main@msg msg `uc  1 a 1 7 ]
+"374
 } 0
-"56
+"59
 [v _servoRotate90 servoRotate90 `(v  1 e 1 0 ]
 {
-"62
-[v servoRotate90@i i `ui  1 a 2 1 ]
-"76
+"66
+[v servoRotate90@i i `ui  1 a 2 10 ]
+"80
 } 0
-"34
+"36
 [v _servoRotate30 servoRotate30 `(v  1 e 1 0 ]
 {
-"40
-[v servoRotate30@i i `ui  1 a 2 1 ]
-"54
+"43
+[v servoRotate30@i i `ui  1 a 2 10 ]
+"57
 } 0
-"78
+"82
 [v _servoRotate120 servoRotate120 `(v  1 e 1 0 ]
 {
-"84
-[v servoRotate120@i i `ui  1 a 2 1 ]
-"99
+"89
+[v servoRotate120@i i `ui  1 a 2 10 ]
+"104
 } 0
-"176
+"183
 [v _sensorReset sensorReset `(v  1 e 1 0 ]
 {
-"191
+"198
 } 0
-"22
+"24
 [v _servoRotate0 servoRotate0 `(v  1 e 1 0 ]
 {
-"24
+"26
 [v servoRotate0@i i `ui  1 a 2 1 ]
-"32
+"34
 } 0
-"238
+"245
 [v _sensorPing sensorPing `(v  1 e 1 0 ]
 {
-"253
+"260
 } 0
-"255
+"262
 [v _sendADCResults sendADCResults `(v  1 e 1 0 ]
 {
-"257
-[v sendADCResults@results results `ui  1 a 2 4 ]
-"264
+"265
+[v sendADCResults@results results `ui  1 a 2 1 ]
+"266
+[v sendADCResults@nib3 nib3 `uc  1 a 1 4 ]
+[v sendADCResults@nib2 nib2 `uc  1 a 1 3 ]
+[v sendADCResults@nib1 nib1 `uc  1 a 1 0 ]
+"335
 } 0
-"228
+"235
 [v _ADC_conversion_results ADC_conversion_results `(ui  1 e 2 0 ]
 {
-"234
+"241
 [v ADC_conversion_results@result result `ui  1 a 2 2 ]
-"236
+"243
 } 0
-"112
+"117
 [v _receive_msg receive_msg `(uc  1 e 1 0 ]
 {
-"115
+"120
 [v receive_msg@results results `uc  1 a 1 1 ]
-"174
+"181
 } 0
-"101
+"106
 [v _set_receive set_receive `(v  1 e 1 0 ]
 {
-"110
+"115
 } 0
 "82 C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\mcc_generated_files/mcc.c
 [v _SYSTEM_Initialize SYSTEM_Initialize `(v  1 e 1 0 ]
@@ -300,10 +306,10 @@
 {
 "74
 } 0
-"192 C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
+"199 C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
 [v _ADC_Init ADC_Init `(v  1 e 1 0 ]
 {
-"226
+"233
 } 0
 "464 C:\Program Files (x86)\Microchip\xc8\v1.42\sources\common\doprnt.c
 [v _printf printf `(i  1 e 2 0 ]
