@@ -7,6 +7,7 @@
 #include <pic16f18857.h>
 #include "mcc_generated_files/mcc.h" //default library 
 
+//messages 
 #define MSG_RESET   0x0
 #define MSG_PING    0x1
 #define MSG_GET     0x2
@@ -16,11 +17,14 @@
 #define MSG_ACK     0xE
 #define MSG_NOTHING 0xF
 
+//constants
 #define INPUT       1
 #define OUTPUT      0
 
 #define HIGH        1
 #define LOW         0
+
+#define no_op       (void) 0 //an instruction that does nothing
 
 // Circuit Connections
 // ADC input - A1
@@ -99,11 +103,12 @@ void set_receive()
 {  
     //Set strobe and d0-3 as digital input
     ANSELC = 0; 
-    TRISC |= INPUT << 6;
-    TRISC |= INPUT << 2;
-    TRISC |= INPUT << 1;
-    TRISC |= INPUT << 7;
-    TRISC |= INPUT << 5;
+    TRISC = 0b11100110;
+    // TRISC |= INPUT << 2;
+    // TRISC |= INPUT << 1;
+    // TRISC |= INPUT << 7;
+    // TRISC |= INPUT << 6;
+    // TRISC |= INPUT << 5;
 }
 
 //Get prepared to send a message
@@ -112,10 +117,11 @@ void set_send()
     //Set strobe as input, and d0-3 as ouptut
     ANSELC = 0; 
     TRISC |= INPUT << 6;
-    TRISC &= !(INPUT << 2);
-    TRISC &= !(INPUT << 1);
-    TRISC &= !(INPUT << 7);
-    TRISC &= !(INPUT << 5);
+    TRISC = 0b01000000;
+    // TRISC &= !(INPUT << 2);
+    // TRISC &= !(INPUT << 1);
+    // TRISC &= !(INPUT << 7);
+    // TRISC &= !(INPUT << 5);
 }
 
 unsigned char get_msg_on_line()
@@ -145,23 +151,30 @@ unsigned char receive_msg()
 
   //1 wait for galileo to pull strobe low
   while(STROBE_VAL == HIGH) 
-  { (void) 0; }
+  { no_op; }
 
   //2 computer outputs a commmand to the bus
   
   //3 computer raises strobe.... when it does, PIC reads the value
   while(STROBE_VAL == LOW)
-  { (void) 0;} //mill until the strobe raises
+  { no_op;} //mill until the strobe raises
   
   data = get_msg_on_line();
 
   while(STROBE_VAL == HIGH)
-    { (void) 0;} //the strobe should stay high for 10 ms
+  { 
+    no_op;
+  } 
 
   //4. Galileo ends write by pulling strobe low again (for 10 ms)
-  __delay_ms(11); //wait that time.
+  //wait until the bus goes back high.
+  while(STROBE_VAL == LOW)
+  { 
+    no_op;
+  }
 
-  //5. galileo stops putting hte command on the bus, write is concluded
+  //5. galileo stops putting the command on the bus, and strobe floats high
+  //   write is concluded
   return data;
 }
 
@@ -172,26 +185,38 @@ void send_msg(unsigned char data)
 
   //1 wait for galileo to pull strobe low
   while(STROBE_VAL == HIGH) 
-  { (void) 0; }
+  { 
+    no_op; 
+  }
 
   //2 pic outputs a commmand to the bus
   put_msg_on_line(data);
 
   //3 computer raises strobe and starts reading the value
   while(STROBE_VAL == LOW)
-  { (void) 0;} //mill until the strobe raises
+  { 
+    //mill until the strobe raises
+    no_op;
+  } 
   
   //PIC learns the computer reads the value
 
   //The galileo pulls the strobe signal low to indicate the value has been read
   while(STROBE_VAL == HIGH)
-    { (void) 0;} //the strobe should stay high for 10 ms
+  { 
+    no_op;
+  } 
 
   //5. pic sees the strobe pulled low and stops outputting the 4 bit value
   put_msg_on_line(0x00);
 
-  //the galileo waits so so will I
-  __delay_ms(11); //wait that time.
+  //the galileo waits a little bit and puts the bus back high
+  while(STROBE_VAL == LOW)
+  { 
+    no_op;
+  }
+
+  //once strobe goes back high, the write is completed
 }
 
 void sensorReset()
@@ -293,7 +318,7 @@ void main (void)
     }
     else
     {
-        (void) 0;
+        no_op;
     }
 
   send_msg(MSG_ACK);
