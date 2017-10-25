@@ -1,3 +1,8 @@
+/*
+ * This is the Lab 2 code in disguise.
+ *  Do not rename from helloWorld.c until you can do it in MPLAB-x
+ */
+
 
 #include <pic16f18857.h>
 #include "mcc_generated_files/mcc.h" //default library 
@@ -11,183 +16,190 @@
 #define MSG_ACK     0xE
 #define MSG_NOTHING 0xF
 
-/* Circuit Connections
-   Signal STROBE   RC6
-   Signal D0       RC2
-   Signal D1       RC3
-   Signal D2       RC4
-   Signal D3       RC5
- */
+#define INPUT       1
+#define OUTPUT      0
 
-void servoRotate0() //0 Degree -> reset servo position
+#define HIGH        1
+#define LOW         0
+
+// Circuit Connections
+// ADC input - A1
+// Signal STROBE    RC6
+#define STROBE_VAL  PORTCbits.RC6
+#define STROBE_TRI  TRISCbits.RC6
+// Signal D0        RC2
+#define D0_VAL      PORTCbits.RC2
+#define D0_TRI      TRISCbits.RC2
+// Signal D1        RC1
+#define D1_VAL      PORTCbits.RC1
+#define D1_TRI      TRISCbits.RC1
+// Signal D2        RC7
+#define D2_VAL      PORTCbits.RC7
+#define D2_TRI      TRISCbits.RC7
+// Signal D3        RC5
+#define D3_VAL      PORTCbits.RC5
+#define D3_TRI      TRISCbits.RC5
+  
+  
+//Rotate the servo to 0 degrees
+void servoRotate0() 
 {
   unsigned int i;
   for(i=0;i<50;i++)
   {
-    PORTB = 1;
-    __delay_ms(1);
-    PORTB = 0;
-    __delay_ms(19);
+    PORTB = HIGH;
+    __delay_ms(0.5);
+    PORTB = LOW;
+    __delay_ms(19.5);
   }
 }
 
-void servoRotate30() //30 Degree
+//Rotate the servo to 30 degrees
+void servoRotate30() 
 {
-  while(PORTCbits.RC6 == 1)
-  {
-        
-  }  
-  TRISC = 0b01000000;
-  //send the ACK message to the galileo
-  PORTCbits.RC2 = 0;
-  PORTCbits.RC3 = 1;
-  PORTCbits.RC7 = 1;
-  PORTCbits.RC5 = 1;
   unsigned int i;
   for(i=0;i<50;i++)
   {
-    PORTB = 1;
+    PORTB = HIGH;
     __delay_ms(1.18);
-    PORTB = 0;
+    PORTB = LOW;
     __delay_ms(18.82);
   }
 }
 
-void servoRotate90() //90 Degree
+//Rotate the servo to 90 degrees
+void servoRotate90() 
 {
-  while(PORTCbits.RC6 == 1)
-  {
-        
-  } 
-  TRISC = 0b01000000;
-  //send the ACK message to the galileo
-  PORTCbits.RC2 = 0;
-  PORTCbits.RC3 = 1;
-  PORTCbits.RC7 = 1;
-  PORTCbits.RC5 = 1;
   unsigned int i;
   for(i=0;i<50;i++)
   {
-    PORTB = 1;
+    PORTB = HIGH;
     __delay_ms(1.5);
-    PORTB = 0;
+    PORTB = LOW;
     __delay_ms(18.5);
   }
 }
 
-void servoRotate120() //120 Degree
+//Rotate the servo to 120 degrees
+void servoRotate120() 
 {
-  while(PORTCbits.RC6 == 1)
-  {
-        
-  }
-  TRISC = 0b01000000;
-  //send the ACK message to the galileo
-  PORTCbits.RC2 = 0;
-  PORTCbits.RC3 = 1;
-  PORTCbits.RC7 = 1;
-  PORTCbits.RC5 = 1;
   unsigned int i;
   for(i=0;i<50;i++)
   {
-    PORTB = 1;
+    PORTB = HIGH;
     __delay_ms(1.68);
-    PORTB = 0;
+    PORTB = LOW;
     __delay_ms(18.32);
   }
   
 }
 
+//Get prepared to receive a message
 void set_receive()
 {  
-  /*
-   1.set RC6 as digital input
-   2.set RC2, RC3, RC4 and RC5 as digital inputs
-  */
-    ANSELC = 0; //set portc to digital
-    PORTC = 0; //clear portc 
-    TRISC = 0b11101100; //setting RC2-6 as digital inputs
+    //Set strobe and d0-3 as digital input
+    ANSELC = 0; 
+    TRISC |= INPUT << 6;
+    TRISC |= INPUT << 2;
+    TRISC |= INPUT << 1;
+    TRISC |= INPUT << 7;
+    TRISC |= INPUT << 5;
 }
 
+//Get prepared to send a message
+void set_send()
+{  
+    //Set strobe as input, and d0-3 as ouptut
+    ANSELC = 0; 
+    TRISC |= INPUT << 6;
+    TRISC &= !(INPUT << 2);
+    TRISC &= !(INPUT << 1);
+    TRISC &= !(INPUT << 7);
+    TRISC &= !(INPUT << 5);
+}
+
+unsigned char get_msg_on_line()
+{
+  unsigned char data;
+  data += D0_VAL;
+  data += D1_VAL << 1;
+  data += D2_VAL << 2;
+  data += D3_VAL << 3;
+  return data;
+}
+
+void put_msg_on_line(unsigned char data)
+{
+  D0_VAL = (data & 0b0001);
+  D1_VAL = (data & 0b0010) >> 1;
+  D2_VAL = (data & 0b0100) >> 2;
+  D3_VAL = (data & 0b1000) >> 3;
+}
+
+//perform a read operation, start to finish in the 
 unsigned char receive_msg()
 {
-    set_receive();
-    unsigned char results;
-    while(PORTCbits.RC6 == 0)
-    {
-        
-    }
-    while(PORTCbits.RC6 == 1)
-    {
-        if(PORTCbits.RC5 == 0 && 
-           PORTCbits.RC7 == 0 &&
-           PORTCbits.RC3 == 0 &&
-           PORTCbits.RC2 == 0)
-        {
-            results = 0x0;
-        }
-        else if(PORTCbits.RC5 == 0 && 
-                PORTCbits.RC7 == 0 &&
-                PORTCbits.RC3 == 0 &&
-                PORTCbits.RC2 == 1)
-        {
-            results = 0x1;
-        }
-        else if(PORTCbits.RC5 == 0 && 
-                PORTCbits.RC7 == 0 &&
-                PORTCbits.RC3 == 1 &&
-                PORTCbits.RC2 == 0)
-        {
-            results = 0x2;
-        }
-        else if(PORTCbits.RC5 == 0 && 
-                PORTCbits.RC7 == 0 &&
-                PORTCbits.RC3 == 1 &&
-                PORTCbits.RC2 == 1)
-        {
-            results = 0x3;
-        }
-        else if(PORTCbits.RC5 == 0 && 
-                PORTCbits.RC7 == 1 &&
-                PORTCbits.RC3 == 0 &&
-                PORTCbits.RC2 == 0)
-        {
-            results = 0x4;
-        }
-        else if(PORTCbits.RC5 == 0 && 
-                PORTCbits.RC7 == 1 &&
-                PORTCbits.RC3 == 0 &&
-                PORTCbits.RC2 == 1)
-        {
-            results = 0x5;
-        }
-    }
-    return results;
- /* 1.wait strobe high
-    2.wait strobe low
-    3.read the data
-    4.wait strobe high
-    5.return the data
-    */
-    
+  unsigned char data;
+  //get ready to receive
+  set_receive();
+
+  //1 wait for galileo to pull strobe low
+  while(STROBE_VAL == HIGH) 
+  { (void) 0; }
+
+  //2 computer outputs a commmand to the bus
+  
+  //3 computer raises strobe.... when it does, PIC reads the value
+  while(STROBE_VAL == LOW)
+  { (void) 0;} //mill until the strobe raises
+  
+  data = get_msg_on_line();
+
+  while(STROBE_VAL == HIGH)
+    { (void) 0;} //the strobe should stay high for 10 ms
+
+  //4. Galileo ends write by pulling strobe low again (for 10 ms)
+  __delay_ms(11); //wait that time.
+
+  //5. galileo stops putting hte command on the bus, write is concluded
+  return data;
+}
+
+void send_msg(unsigned char data)
+{
+    //get ready to receive
+  set_send();
+
+  //1 wait for galileo to pull strobe low
+  while(STROBE_VAL == HIGH) 
+  { (void) 0; }
+
+  //2 pic outputs a commmand to the bus
+  put_msg_on_line(data);
+
+  //3 computer raises strobe and starts reading the value
+  while(STROBE_VAL == LOW)
+  { (void) 0;} //mill until the strobe raises
+  
+  //PIC learns the computer reads the value
+
+  //The galileo pulls the strobe signal low to indicate the value has been read
+  while(STROBE_VAL == HIGH)
+    { (void) 0;} //the strobe should stay high for 10 ms
+
+  //5. pic sees the strobe pulled low and stops outputting the 4 bit value
+  put_msg_on_line(0x00);
+
+  //the galileo waits so so will I
+  __delay_ms(11); //wait that time.
 }
 
 void sensorReset()
 {
     printf("REEEEEEEEEEE");
-    while(PORTCbits.RC6 == 1)
-    {
-        
-    }
-    TRISC = 0b01000000;
-    //send the ACK message to the galileo
-    PORTCbits.RC2 = 0;
-    PORTCbits.RC3 = 1;
-    PORTCbits.RC7 = 1;
-    PORTCbits.RC5 = 1;
-    //reset the servo position
     servoRotate0();
 }
+
 void ADC_Init(void)  {
  //  Configure ADC module  
  //---- Set the Registers below::
@@ -218,7 +230,6 @@ void ADC_Init(void)  {
     ADCON0 = 0b10000100; 
     ADREF = 0;
     ADPCH = 0b00000001;
-            
 } 
 
 unsigned int ADC_conversion_results() {  
@@ -233,69 +244,60 @@ unsigned int ADC_conversion_results() {
 
 void sensorPing()
 {
-    PORTA = 1;
-    __delay_ms(100);
-    while(PORTCbits.RC6 == 1)
-    {
-        
-    }
-    TRISC = 0b01000000;
-    PORTA = 0;
-    //send the ACK message to the galileo
-    PORTCbits.RC2 = 0;
-    PORTCbits.RC3 = 1;
-    PORTCbits.RC7 = 1;
-    PORTCbits.RC5 = 1;
+  printf("Pong");
 }
 
 void sendADCResults()
 {
-    unsigned results;
-    while(PORTCbits.RC6 == 1)
-    {
-        
-    }
-    TRISC = 0b01000000;
-    //send the ACK message to the galileo
-    PORTCbits.RC2 = 0;
-    PORTCbits.RC3 = 1;
-    PORTCbits.RC7 = 1;
-    PORTCbits.RC5 = 1;
-    results = ADC_conversion_results();
-    //???????
+  printf("todo");
 }
 
 // Main program
 void main (void)
 {
-    SYSTEM_Initialize();
-    unsigned char msg; 
-    TRISB = 0;
-    ADC_Init();
-    TRISAbits.TRISA0 = 0; //make sure portA0 is ouput for the LED
-    while(1)
-    {  
+  unsigned char msg; 
+  ADC_Init();
+  TRISA = OUTPUT; //make sure portA0 is ouput for the LED
+  while(1)
+  {  
+    //receive the message
     msg=receive_msg();
+
+    //does something based on that message
     if(msg == MSG_RESET)
-   	    sensorReset();
+    {
+      sensorReset();
+    }
     else if (msg == MSG_PING)
-        sensorPing();
+    {
+      sensorPing();
+    }
     else if (msg == MSG_GET)
     {
-        sendADCResults();
+      sendADCResults();
+      send_msg(0x6); //fake data 4 now
+      send_msg(0x6);
+      send_msg(0x6);
     }
     else if (msg == MSG_TURN30)
-        servoRotate30();   
+    {
+      servoRotate30();
+    }
     else if (msg == MSG_TURN90)
+    {
         servoRotate90();
+    }
     else if (msg == MSG_TURN120)
+    {
         servoRotate120();
+    }
     else
+    {
         (void) 0;
-    } 
+    }
+
+  send_msg(MSG_ACK);
+  } // \while
 }
 
 
-/**
- End of File
-*/
