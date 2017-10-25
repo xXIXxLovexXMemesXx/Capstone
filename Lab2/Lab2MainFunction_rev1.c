@@ -30,6 +30,11 @@
 #define HIGH                    (1)
 #define LOW                     (0)
 
+#define GPIO_MODE_PULLUP        (1)
+#define GPIO_MODE_PULLDOWN      (2)
+#define GPIO_MODE_HIZ           (3)
+#define GPIO_MODE_STRONG        (4)
+
 #define SUCCESS                 (0)
 #define ERROR                   (-1)
 
@@ -47,91 +52,86 @@
 //Constants
 #define BUFFER_SIZE             (256)
 #define EXPORT_FILE             "/sys/class/gpio/export"
+#define STROBE_DELAY            (1000*20) //10 ms in us
 /************************/
 
-//open GPIO and set the direction
-//returns pointer to string containing the gpio pin directory if successful
-//  this needs to get freed after you're done with it
-//returns null ptr on error
-char* openGPIO(int gpio_handle, int direction )
+//returns the mode set on success
+//returns ERROR(negative) on failure
+int setGPIOMode(char* gpioDirectory, int mode)
 {
-    int n;
-    //   1. export GPIO
-    FILE* exportFh = fopen(EXPORT_FILE, "w");
-    if(exportFh== NULL)
-    {
-        printf("Couldn't not open export file\n");
-        fclose(exportFh);
-        return NULL;
-    }
-    char numBuffer[5];
-    snprintf(numBuffer, 5, "%d", gpio_handle);
-    n = fputs(numBuffer, exportFh);
-    fclose(exportFh);
-    if(n < 0)
-    {
-        printf("error writing to export file\n");
-        return NULL;
-    }
-    
-    //form the file name of the newly created gpio directory
-    char *gpioDirectory = malloc(BUFFER_SIZE);
+    //find Drive file
+    char gpioDrive[BUFFER_SIZE];
+    strcpy(gpioDrive, gpioDirectory);
+    strcat(gpioDrive, "drive");
+    FILE* driveFh = fopen(gpioDrive, "w");
 
-    n = snprintf(gpioDirectory, BUFFER_SIZE, "/sys/class/gpio/gpio%d/", gpio_handle);
-    if(n >= BUFFER_SIZE)
+    int n = -1;
+    if(mode == GPIO_MODE_HIZ)
     {
-        printf("Buffer overflow when creating directory name\n");
-        free(gpioDirectory);
-        return NULL;
+        n = fputs("hiz", driveFh);
+    }
+    else if(mode == GPIO_MODE_STRONG)
+    {
+        n = fputs("strong", driveFh);
+    }
+    else if(mode == GPIO_MODE_PULLUP)
+    {
+        n = fputs("pullup", driveFh);
+    }
+    else if(mode == GPIO_MODE_PULLDOWN)
+    {
+        n = fputs("pulldown", driveFh);
     }
 
-    //    2.set the direction
+    fclose(driveFh);
+    if(n < 0 )
+    {
+        printf("Error writing to gpio drive file in %s", gpioDirectory);
+        return ERROR;
+    }
+
+    return mode;
+}
+//Sets the GPIO pin specified to a new direction
+// ALSO sets the mode of the pin.
+//returns the direction set on success
+//returns ERROR(negative) on failure
+int setGPIODirection(char* gpioDirectory, int direction)
+{
+    //find direciton file
     char gpioDirection[BUFFER_SIZE];
     strcpy(gpioDirection, gpioDirectory);
     strcat(gpioDirection, "direction");
     FILE* directionFh = fopen(gpioDirection, "w");
 
-    if(directionFh == NULL)
-    {
-        printf("gpio direction file is null %s \n", gpioDirection);
-        free(gpioDirectory);
-        fclose(directionFh);
-        return NULL;
-    }
+    //find Drive file
+    char gpioDrive[BUFFER_SIZE];
+    strcpy(gpioDrive, gpioDirectory);
+    strcat(gpioDrive, "drive");
+    FILE* driveFh = fopen(gpioDrive, "w");
 
-    if(direction == GPIO_DIRECTION_OUT)
-    {
-        n = fputs("out", directionFh);
-    }
-    else if(direction == GPIO_DIRECTION_IN)
+    int n = -1;
+    int m = -1;
+    if(direction == GPIO_DIRECTION_IN)
     {
         n = fputs("in", directionFh);
+        m = fputs("hiz", driveFh);
     }
-    if(n < 0)
+    else if(direction == GPIO_DIRECTION_OUT)
     {
-        printf("Error writing to gpio direction file\n");
-        free(gpioDirectory);
-        fclose(directionFh);
-        return NULL;
+        n = fputs("out", directionFh);
+        m = fputs("strong", driveFh);
     }
+
+    fclose(driveFh);
     fclose(directionFh);
-
-    //    3.set the voltage
-    char gpioValue[BUFFER_SIZE];
-    strcpy(gpioValue, gpioDirectory);
-    strcat(gpioValue, "value");
-    FILE* valueFh = fopen(gpioValue, "w");
-    n = fputs("1", valueFh);
-    fclose(valueFh);
-    if(n < 0)
+    if(n < 0 || m < 0)
     {
-        printf("Error writing to gpio value file\n");
-        free(gpioDirectory);
-        return NULL;
+        printf("Error writing to gpio value file in %s", gpioDirectory);
+        return ERROR;
     }
 
-    //return the new gpio directory
-    return gpioDirectory;
+    return direction;
 }
 
 //write value (HIGH or LOW) to port specified
@@ -159,35 +159,52 @@ int writeGPIO(char* gpioDirectory, int value)
     return value;
 }
 
-//Sets the GPIO pin specified to a new direction
-//returns the direction set on success
-//returns ERROR(negative) on failure
-int setGPIODirection(char* gpioDirectory, int direction)
+//open GPIO and set the direction
+//returns pointer to string containing the gpio pin directory if successful
+//  this needs to get freed after you're done with it
+//returns null ptr on error
+char* openGPIO(int gpio_handle, int direction )
 {
-    char gpioDirection[BUFFER_SIZE];
-    strcpy(gpioDirection, gpioDirectory);
-    strcat(gpioDirection, "direction");
-    FILE* directionFh = fopen(gpioDirection, "w");
-
-    int n = -1;
-    if(direction == GPIO_DIRECTION_IN)
+    int n;
+    //   1. export GPIO
+    FILE* exportFh = fopen(EXPORT_FILE, "w");
+    if(exportFh== NULL)
     {
-        n = fputs("in", directionFh);
+        printf("Couldn't open export file\n");
+        fclose(exportFh);
+        return NULL;
     }
-    else if(direction == GPIO_DIRECTION_OUT)
-    {
-        n = fputs("out", directionFh);
-    }
-
-    fclose(directionFh);
+    char numBuffer[5];
+    snprintf(numBuffer, 5, "%d", gpio_handle);
+    n = fputs(numBuffer, exportFh);
+    fclose(exportFh);
     if(n < 0)
     {
-        printf("Error writin to gpio value file in %s", gpioDirectory);
-        return ERROR;
+        printf("error writing to export file\n");
+        return NULL;
+    }
+    
+    //form the file name of the newly created gpio directory
+    char *gpioDirectory = malloc(BUFFER_SIZE);
+
+    n = snprintf(gpioDirectory, BUFFER_SIZE, "/sys/class/gpio/gpio%d/", gpio_handle);
+    if(n >= BUFFER_SIZE)
+    {
+        printf("Buffer overflow when creating directory name\n");
+        free(gpioDirectory);
+        return NULL;
     }
 
-    return direction;
+    //    2.set the direction
+    setGPIODirection(gpioDirectory, direction);
+
+    //    3.set the voltage
+    writeGPIO(gpioDirectory, HIGH);
+
+    //return the new gpio directory
+    return gpioDirectory;
 }
+
 
 //read value (HIGH or LOW) from port specified
 //port direction must be set to input.
@@ -240,16 +257,21 @@ void writeNibble(unsigned char data,
 
     //3: raise strobe and wait at least 10ms
     writeGPIO(strobe, HIGH);
-    usleep(10);
+    usleep(STROBE_DELAY);
 
     //4: Pull strobe low again
     writeGPIO(strobe, LOW);
+    usleep(STROBE_DELAY); //and delay a little bit
 
     //5: clear the bus
     writeGPIO(d0, LOW);
     writeGPIO(d1, LOW);
     writeGPIO(d2, LOW);
     writeGPIO(d3, LOW);
+
+    //....let the bus float high again
+    writeGPIO(strobe, HIGH); 
+    usleep(STROBE_DELAY); //and delay a little bit
 }
 
 //Reads a 4 bit nibble from the bus following the protocol
@@ -270,14 +292,17 @@ int readNibble(char* d0,
     setGPIODirection(d3, GPIO_DIRECTION_IN);
     setGPIODirection(strobe, GPIO_DIRECTION_OUT);
 
+    //TODO SET MODE TO HIGHZ FOR INPUT
     //start the bus protocol
     //1: pull strobe low to signal the start of the read
     writeGPIO(strobe, LOW);
 
-    //2: the PIC should output to the bus now. We give it 10ms
-    usleep(10);
+    //2: the PIC should output to the bus now. 
 
-    //3: raise strobe and start reading the value from the data bus
+    //3: We give it 10ms
+    usleep(STROBE_DELAY);
+
+    //4: raise strobe and start reading the value from the data bus
     writeGPIO(strobe, HIGH);
     test = readGPIO(d0);
     if(test == ERROR)
@@ -307,8 +332,12 @@ int readNibble(char* d0,
     }
     //4: Pull strobe low again to signal that data has been read
     writeGPIO(strobe, LOW);
-
+    usleep(STROBE_DELAY);
     //5: the PIC will clear the bus
+
+    //....let the bus float high again
+    writeGPIO(strobe, HIGH); 
+    usleep(STROBE_DELAY); //and delay a little bit
     return (int)data;
 }
 
@@ -350,6 +379,26 @@ void testGPIOWriteNibble(char* strobe_fh,
     exit(0);
 }
 
+// tests the GPIO readnibble
+void testGPIOReadNibble(char* strobe_fh,
+                            char* d4, //48
+                            char* d5, //50
+                            char* d6, //52
+                            char* d7) //54 
+{
+    unsigned i;
+    unsigned data;
+    //test writeNibble
+    for( i =0; i <1000; i++)
+    {
+        data = readNibble(d4, d5, d6, d7, strobe_fh);
+        printf("read: %X\n",data);
+        
+        usleep(STROBE_DELAY);
+    }
+    exit(0);
+}
+
 //Functions definitions - for commands
 void reset();
 void ping();
@@ -375,18 +424,11 @@ int main(void)
     fileHandleGPIO_7 = openGPIO(GP_7, GPIO_DIRECTION_OUT);
     fileHandleGPIO_S = openGPIO(Strobe, GPIO_DIRECTION_OUT);
 
-    writeNibble(0, 
-            fileHandleGPIO_4,
-            fileHandleGPIO_5,
-            fileHandleGPIO_6,
-            fileHandleGPIO_7,
-            fileHandleGPIO_S);
-    /*Line 92 sets the strobe to LOW as shown in figure 1 of the lab manual. 
-    The data lines are also set LOW (lines 99-102) to assure that
-    they aren't sending any data */ 
     int input;
     int scanf_test;
+
     do{
+
         printf("Select a number for desired action: \n\n");
         printf("1. Reset\n");
         printf("2. Ping\n");
@@ -445,13 +487,14 @@ void reset()
                     fileHandleGPIO_7,
                     fileHandleGPIO_S);
         printf("Wrote Nibble to line\n");
-        usleep(30);
+        usleep(STROBE_DELAY);
         receive_msg = readNibble(fileHandleGPIO_4,
                                 fileHandleGPIO_5,
                                 fileHandleGPIO_6,
                                 fileHandleGPIO_7,
                                 fileHandleGPIO_S);
         printf("Received message from PIC: %x \n", receive_msg);
+        usleep(STROBE_DELAY);
     }
     printf("Reset message sent\n");
 }
@@ -468,14 +511,15 @@ void ping()
                     fileHandleGPIO_6,
                     fileHandleGPIO_7,
                     fileHandleGPIO_S);
-        printf("Wrote Nibble to bus\n");
-        usleep(30);
+        printf("Wrote ping to bus\n");
+        usleep(STROBE_DELAY);
         receive_msg = readNibble(fileHandleGPIO_4,
                                 fileHandleGPIO_5,
                                 fileHandleGPIO_6,
                                 fileHandleGPIO_7,
                                 fileHandleGPIO_S);
         printf("Received message from PIC: %x \n", receive_msg);
+        usleep(STROBE_DELAY);
     }
     printf("Ping message sent\n");
 }
@@ -488,6 +532,8 @@ void adc_value()
     int adc_value = 0;
     while(receive_msg != MSG_ACK)
     {
+        adc_value = 0;
+        receive_msg = 0;
         printf("Starting to send ADC_request\n");
         writeNibble(MSG_GET, 
                     fileHandleGPIO_4,
@@ -495,18 +541,40 @@ void adc_value()
                     fileHandleGPIO_6,
                     fileHandleGPIO_7,
                     fileHandleGPIO_S);
-        //expect to receive 3 messages containing ADC values, msn first
-        usleep(30);
+        
+        setGPIODirection(fileHandleGPIO_4, GPIO_DIRECTION_IN);
+        setGPIODirection(fileHandleGPIO_5, GPIO_DIRECTION_IN);
+        setGPIODirection(fileHandleGPIO_6, GPIO_DIRECTION_IN);
+        setGPIODirection(fileHandleGPIO_7, GPIO_DIRECTION_IN);
+
+        for(i = 0; i < 3; i++) //testing for the logic analyzer
+        {
+          setGPIOMode(fileHandleGPIO_S, GPIO_MODE_PULLUP);
+          writeGPIO(fileHandleGPIO_S, HIGH);
+          usleep(3*STROBE_DELAY);
+          setGPIOMode(fileHandleGPIO_S, GPIO_MODE_PULLDOWN);
+          writeGPIO(fileHandleGPIO_S, LOW);
+          usleep(STROBE_DELAY);
+          setGPIOMode(fileHandleGPIO_S, GPIO_MODE_PULLUP);
+          writeGPIO(fileHandleGPIO_S, HIGH);
+          usleep(STROBE_DELAY);
+          setGPIOMode(fileHandleGPIO_S, GPIO_MODE_PULLDOWN);
+          writeGPIO(fileHandleGPIO_S, LOW);
+          usleep(STROBE_DELAY);
+        }
+
+        expect to receive 3 messages containing ADC values, msn first
+        usleep(STROBE_DELAY);
         for(i = 8; i >= 0; i -= 4)
         {
-            printf("Expecting ADC nibble\n");
             receive_msg = readNibble(fileHandleGPIO_4,
                                     fileHandleGPIO_5,
                                     fileHandleGPIO_6,
                                     fileHandleGPIO_7,
                                     fileHandleGPIO_S);
             adc_value += ((unsigned) receive_msg) << i;
-            usleep(30);
+            printf("Received ADC Nibble: 0x%x\n", receive_msg);
+            usleep(STROBE_DELAY);
         }
         //expect one last ACK message
         receive_msg = readNibble(fileHandleGPIO_4,
@@ -514,8 +582,10 @@ void adc_value()
                                 fileHandleGPIO_6,
                                 fileHandleGPIO_7,
                                 fileHandleGPIO_S);
+        printf("Received ADC ACK(?): 0x%x\n", receive_msg);
+        usleep(STROBE_DELAY);
     }
-    printf("adc message received successfully: %x\n", adc_value);
+    printf("adc message received successfully: 0x%x\n", adc_value);
 }
 
 void servo_30()
@@ -531,14 +601,14 @@ void servo_30()
                     fileHandleGPIO_7,
                     fileHandleGPIO_S);
         printf("Wrote Nibble to Line Servo30\n");
-        usleep(30);
+        usleep(STROBE_DELAY);
         receive_msg = readNibble(fileHandleGPIO_4,
                                 fileHandleGPIO_5,
                                 fileHandleGPIO_6,
                                 fileHandleGPIO_7,
                                 fileHandleGPIO_S);
         printf("Received message from PIC: %x \n", receive_msg);
-
+        usleep(STROBE_DELAY);
     }
     printf("servo_30 message sent\n");
 }
@@ -556,13 +626,14 @@ void servo_90()
                     fileHandleGPIO_7,
                     fileHandleGPIO_S);
         printf("Wrote Nibble to bus\n");
-        usleep(30);
+        usleep(STROBE_DELAY);
         receive_msg = readNibble(fileHandleGPIO_4,
                                 fileHandleGPIO_5,
                                 fileHandleGPIO_6,
                                 fileHandleGPIO_7,
                                 fileHandleGPIO_S);
         printf("Received message from PIC: %x \n", receive_msg);
+        usleep(STROBE_DELAY);
     }
     printf("Servo_90 message sent\n");
 }
@@ -579,13 +650,14 @@ void servo_120()
                     fileHandleGPIO_7,
                     fileHandleGPIO_S);
         printf("Wrote Nibble to bus\n");
-        usleep(30);
+        usleep(STROBE_DELAY);
         receive_msg = readNibble(fileHandleGPIO_4,
                                 fileHandleGPIO_5,
                                 fileHandleGPIO_6,
                                 fileHandleGPIO_7,
                                 fileHandleGPIO_S);
         printf("Received message from PIC: %x \n", receive_msg);
+        usleep(STROBE_DELAY);
     }
     printf("Servo_120 message sent\n");
 }
