@@ -34,13 +34,15 @@
 #define ERROR                   (-1)
 
 /*User Commands*/
-#define MSG_RESET   0x1
-#define MSG_PING    0x2
-#define MSG_GET     0x3
-#define MSG_TURN30  0x4
-#define MSG_TURN90  0x5
-#define MSG_TURN120 0x6
-#define MSG_ACK     0x7
+#define MSG_RESET   0x0
+#define MSG_PING    0x1
+#define MSG_GET     0x2
+#define MSG_TURN30  0x3
+#define MSG_TURN90  0x4
+#define MSG_TURN120 0x5
+
+#define MSG_ACK     0xE
+#define MSG_NOTHING 0xF
 
 //Constants
 #define BUFFER_SIZE             (256)
@@ -114,7 +116,7 @@ char* openGPIO(int gpio_handle, int direction )
     }
     fclose(directionFh);
 
-    //    3.set the votage
+    //    3.set the voltage
     char gpioValue[BUFFER_SIZE];
     strcpy(gpioValue, gpioDirectory);
     strcat(gpioValue, "value");
@@ -260,6 +262,7 @@ int readNibble(char* d0,
     char* strobe)
 {
     unsigned char data = 0x00;
+    int test = 1;
     //set all the data ports to input, but the strobe to output
     setGPIODirection(d0, GPIO_DIRECTION_IN);
     setGPIODirection(d1, GPIO_DIRECTION_IN);
@@ -276,14 +279,30 @@ int readNibble(char* d0,
 
     //3: raise strobe and start reading the value from the data bus
     writeGPIO(strobe, HIGH);
-    data += readGPIO(d0);
-    data += readGPIO(d1) << 1;
-    data += readGPIO(d2) << 2;
-    data += readGPIO(d3) << 3;
+    test = readGPIO(d0);
+    if(test == ERROR)
+        return ERROR;
+    data += test;
+    
+    test = readGPIO(d1);
+    if(test == ERROR)
+        return ERROR;
+    data += test << 1;
+
+    test = readGPIO(d2);
+    if(test == ERROR)
+        return ERROR;
+    data += test << 2;
+
+    test = readGPIO(d3);
+    if(test == ERROR)
+        return ERROR;
+
+    data += test << 3;
 
     if(data > 0xF)
     {
-        printf("Error reading nibble from the bus");
+        printf("Uncaught error reading nibble from the bus");
         return ERROR;
     }
     //4: Pull strobe low again to signal that data has been read
@@ -355,65 +374,60 @@ int main(void)
     fileHandleGPIO_6 = openGPIO(GP_6, GPIO_DIRECTION_OUT);
     fileHandleGPIO_7 = openGPIO(GP_7, GPIO_DIRECTION_OUT);
     fileHandleGPIO_S = openGPIO(Strobe, GPIO_DIRECTION_OUT);
+
+    writeNibble(0, 
+            fileHandleGPIO_4,
+            fileHandleGPIO_5,
+            fileHandleGPIO_6,
+            fileHandleGPIO_7,
+            fileHandleGPIO_S);
     /*Line 92 sets the strobe to LOW as shown in figure 1 of the lab manual. 
     The data lines are also set LOW (lines 99-102) to assure that
     they aren't sending any data */ 
-    
-    while(1)
-    {
-    /*For line 106, I'm not sure what the best way to handle 
-    the write to of the GPIO is since a #define directive was 
-    used (lines 28 & 29 ) to pick high or low. Can you send a
-    #define variable and compare it to a normal variable? Even 
-    if you can do that, how to physically change direction?
-    
-    2.write data... (where the menu selection is used? and a bunch of 
-    other stuff?))*/
+    int input;
+    int scanf_test;
+    do{
+        printf("Select a number for desired action: \n\n");
+        printf("1. Reset\n");
+        printf("2. Ping\n");
+        printf("3. Get ADC value\n");
+        printf("4. Turn Servo 30 degrees\n");
+        printf("5. Turn Servo 90 degrees\n");
+        printf("6. Turn Servo 120 degrees\n");
+        printf("7. Exit\n");
 
-        int input;
-        int scanf_test;
-        do{
-            printf("Select a number for desired action: \n\n");
-            printf("1. Reset\n");
-            printf("2. Ping\n");
-            printf("3. Get ADC value");
-            printf("4. Turn Servo 30 degrees\n");
-            printf("5. Turn Servo 90 degrees\n");
-            printf("6. Turn Servo 120 degrees\n");
-            printf("7. Exit\n");
-
-            //check for input. If ipmroperly formatted,
-            //  set input to 0 to prompt user to input again
-            scanf_test = scanf("%d", &input);
-            if(scanf_test == 0)
-                input = 0;
-
-            switch (input)
-            {
-                case 1 :
-                    reset();
-                    break;
-                case 2  :
-                    ping();
-                    break;
-                case 3  :
-                    adc_value();
-                    break;
-                case 4  :
-                    servo_30();
-                    break;
-                case 5  :
-                    servo_90();
-                    break;
-                case 6  :
-                    servo_120();
-                    break;
-                default :
-                    printf("Please enter a valid number (1 - 6)\n");
-                    break;
-            }
-        }while(input != 7); 
-    }
+        //check for input. 
+        input = 0;
+        scanf_test = scanf("%d", &input);
+        //If ipmroperly formatted,
+        //  set input to 0 to prompt user to input again
+        if(scanf_test == 0)
+            input = 0;
+        switch (input)
+        {
+            case 1 :
+                reset();
+                break;
+            case 2  :
+                ping();
+                break;
+            case 3  :
+                adc_value();
+                break;
+            case 4  :
+                servo_30();
+                break;
+            case 5  :
+                servo_90();
+                break;
+            case 6  :
+                servo_120();
+                break;
+            default :
+                printf("Please enter a valid number (1 - 6)\n");
+                break;
+        }
+    }while(input != 7); 
 }
 
 
@@ -423,18 +437,21 @@ void reset()
     int receive_msg = 0;
     while(receive_msg != MSG_ACK)
     {
+        printf("Starting to send reset\n");
         writeNibble(MSG_RESET, 
                     fileHandleGPIO_4,
                     fileHandleGPIO_5,
                     fileHandleGPIO_6,
                     fileHandleGPIO_7,
                     fileHandleGPIO_S);
+        printf("Wrote Nibble to line\n");
         usleep(30);
         receive_msg = readNibble(fileHandleGPIO_4,
                                 fileHandleGPIO_5,
                                 fileHandleGPIO_6,
                                 fileHandleGPIO_7,
                                 fileHandleGPIO_S);
+        printf("Received message from PIC: %x \n", receive_msg);
     }
     printf("Reset message sent\n");
 }
@@ -451,7 +468,7 @@ void ping()
                     fileHandleGPIO_6,
                     fileHandleGPIO_7,
                     fileHandleGPIO_S);
-        printf("Wrote Nibble to line\n");
+        printf("Wrote Nibble to bus\n");
         usleep(30);
         receive_msg = readNibble(fileHandleGPIO_4,
                                 fileHandleGPIO_5,
@@ -471,6 +488,7 @@ void adc_value()
     int adc_value = 0;
     while(receive_msg != MSG_ACK)
     {
+        printf("Starting to send ADC_request\n");
         writeNibble(MSG_GET, 
                     fileHandleGPIO_4,
                     fileHandleGPIO_5,
@@ -481,6 +499,7 @@ void adc_value()
         usleep(30);
         for(i = 8; i >= 0; i -= 4)
         {
+            printf("Expecting ADC nibble\n");
             receive_msg = readNibble(fileHandleGPIO_4,
                                     fileHandleGPIO_5,
                                     fileHandleGPIO_6,
@@ -504,18 +523,22 @@ void servo_30()
     int receive_msg = 0;
     while(receive_msg != MSG_ACK)
     {
+        printf("Starting to send Servo30\n");
         writeNibble(MSG_TURN30, 
                     fileHandleGPIO_4,
                     fileHandleGPIO_5,
                     fileHandleGPIO_6,
                     fileHandleGPIO_7,
                     fileHandleGPIO_S);
+        printf("Wrote Nibble to Line Servo30\n");
         usleep(30);
         receive_msg = readNibble(fileHandleGPIO_4,
                                 fileHandleGPIO_5,
                                 fileHandleGPIO_6,
                                 fileHandleGPIO_7,
                                 fileHandleGPIO_S);
+        printf("Received message from PIC: %x \n", receive_msg);
+
     }
     printf("servo_30 message sent\n");
 }
@@ -525,18 +548,21 @@ void servo_90()
     int receive_msg = 0;
     while(receive_msg != MSG_ACK)
     {
+        printf("Starting to send Servo90\n");
         writeNibble(MSG_TURN90, 
                     fileHandleGPIO_4,
                     fileHandleGPIO_5,
                     fileHandleGPIO_6,
                     fileHandleGPIO_7,
                     fileHandleGPIO_S);
+        printf("Wrote Nibble to bus\n");
         usleep(30);
         receive_msg = readNibble(fileHandleGPIO_4,
                                 fileHandleGPIO_5,
                                 fileHandleGPIO_6,
                                 fileHandleGPIO_7,
                                 fileHandleGPIO_S);
+        printf("Received message from PIC: %x \n", receive_msg);
     }
     printf("Servo_90 message sent\n");
 }
@@ -552,12 +578,14 @@ void servo_120()
                     fileHandleGPIO_6,
                     fileHandleGPIO_7,
                     fileHandleGPIO_S);
+        printf("Wrote Nibble to bus\n");
         usleep(30);
         receive_msg = readNibble(fileHandleGPIO_4,
                                 fileHandleGPIO_5,
                                 fileHandleGPIO_6,
                                 fileHandleGPIO_7,
                                 fileHandleGPIO_S);
+        printf("Received message from PIC: %x \n", receive_msg);
     }
     printf("Servo_120 message sent\n");
 }
