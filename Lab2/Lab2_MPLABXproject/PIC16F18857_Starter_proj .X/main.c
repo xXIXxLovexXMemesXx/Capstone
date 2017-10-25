@@ -1,7 +1,3 @@
-/*
- * This is the Lab 2 code in disguise.
- *  Do not rename from helloWorld.c until you can do it in MPLAB-x
- */
 
 
 #include <pic16f18857.h>
@@ -52,9 +48,9 @@ void servoRotate0()
   for(i=0;i<50;i++)
   {
     PORTB = HIGH;
-    __delay_ms(0.5);
+    __delay_ms(1.5);
     PORTB = LOW;
-    __delay_ms(19.5);
+    __delay_ms(18.5);
   }
 }
 
@@ -65,9 +61,9 @@ void servoRotate30()
   for(i=0;i<50;i++)
   {
     PORTB = HIGH;
-    __delay_ms(1.18);
+    __delay_ms(1.68);
     PORTB = LOW;
-    __delay_ms(18.82);
+    __delay_ms(18.32);
   }
 }
 
@@ -78,9 +74,9 @@ void servoRotate90()
   for(i=0;i<50;i++)
   {
     PORTB = HIGH;
-    __delay_ms(1.5);
+    __delay_ms(2);
     PORTB = LOW;
-    __delay_ms(18.5);
+    __delay_ms(18);
   }
 }
 
@@ -91,9 +87,9 @@ void servoRotate120()
   for(i=0;i<50;i++)
   {
     PORTB = HIGH;
-    __delay_ms(1.68);
+    __delay_ms(1.32);
     PORTB = LOW;
-    __delay_ms(18.32);
+    __delay_ms(18.68);
   }
   
 }
@@ -280,7 +276,8 @@ void sendADCResults()
 // Main program
 void main (void)
 {
-  unsigned char msg; 
+  unsigned char msg;
+  SYSTEM_Initialize();
   ADC_Init();
   TRISA = OUTPUT; //make sure portA0 is ouput for the LED
   while(1)
@@ -291,14 +288,17 @@ void main (void)
     //does something based on that message
     if(msg == MSG_RESET)
     {
+      send_msg(MSG_ACK);
       sensorReset();
     }
     else if (msg == MSG_PING)
     {
+      send_msg(MSG_ACK);
       sensorPing();
     }
     else if (msg == MSG_GET)
     {
+      send_msg(MSG_ACK);
       sendADCResults();
       send_msg(0x6); //fake data 4 now
       send_msg(0x6);
@@ -306,14 +306,17 @@ void main (void)
     }
     else if (msg == MSG_TURN30)
     {
+      send_msg(MSG_ACK);
       servoRotate30();
     }
     else if (msg == MSG_TURN90)
     {
+        send_msg(MSG_ACK);
         servoRotate90();
     }
     else if (msg == MSG_TURN120)
     {
+        send_msg(MSG_ACK);
         servoRotate120();
     }
     else
@@ -321,7 +324,6 @@ void main (void)
         no_op;
     }
 
-  send_msg(MSG_ACK);
   } // \while
 }
 
