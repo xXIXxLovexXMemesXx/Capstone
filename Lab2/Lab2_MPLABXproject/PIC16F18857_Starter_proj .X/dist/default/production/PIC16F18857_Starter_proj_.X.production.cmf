@@ -11,30 +11,30 @@
 # All addresses and the length are given in unqualified hexadecimal
 # in delta units.  Any other numeric values are decimal.
 %PSECTS
-$C:\Users\students\AppData\Local\Temp\s4ek.obj
+$C:\Users\students\AppData\Local\Temp\s19g.obj
 reset_vec CODE 0 0 0 2 2
 end_init CODE 0 2 2 2 2
 config CONFIG 0 8007 8007 5 2
 $dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
 cinit CODE 0 7FD 7FD 3 2
-text1 CODE 0 62F 62F 2F 2
-text2 CODE 0 5D2 5D2 2E 2
+text1 CODE 0 5D3 5D3 2D 2
+text2 CODE 0 62F 62F 2F 2
 text3 CODE 0 600 600 2F 2
-text4 CODE 0 54F 54F 13 2
-text5 CODE 0 5B3 5B3 1F 2
-text6 CODE 0 562 562 17 2
+text4 CODE 0 550 550 13 2
+text5 CODE 0 5B4 5B4 1F 2
+text6 CODE 0 563 563 17 2
 text7 CODE 0 732 732 CB 2
-text8 CODE 0 540 540 F 2
+text8 CODE 0 541 541 F 2
 text9 CODE 0 691 691 44 2
-text10 CODE 0 513 513 7 2
-text11 CODE 0 522 522 9 2
+text10 CODE 0 514 514 7 2
+text11 CODE 0 523 523 9 2
 text12 CODE 0 65E 65E 33 2
-text13 CODE 0 52B 52B A 2
-text14 CODE 0 535 535 B 2
-text15 CODE 0 594 594 1F 2
-text16 CODE 0 579 579 1B 2
-text17 CODE 0 50E 50E 5 2
-text18 CODE 0 51A 51A 8 2
+text13 CODE 0 52C 52C A 2
+text14 CODE 0 536 536 B 2
+text15 CODE 0 595 595 1F 2
+text16 CODE 0 57A 57A 1B 2
+text17 CODE 0 50F 50F 5 2
+text18 CODE 0 51B 51B 8 2
 maintext CODE 0 6D5 6D5 5D 2
 cstackCOMMON COMMON 1 70 70 D 1
 cstackBANK0 BANK0 1 20 20 8 1
@@ -112,9 +112,9 @@ BANK6 320-36F 1
 BANK7 3A0-3EF 1
 BANK8 420-46F 1
 BANK9 4A0-4EF 1
-CONST 4-50D 2
+CONST 4-50E 2
 CONST 86D-7FFF 2
-ENTRY 4-50D 2
+ENTRY 4-50E 2
 ENTRY 86D-7FFF 2
 IDLOC 8000-8003 2
 SFR10 500-51F 1
@@ -172,7 +172,7 @@ SFR61 1E80-1EEF 1
 SFR62 1F00-1F6F 1
 SFR63 1F80-1FEF 1
 STACK 2008-2FEF 1
-CODE 4-50D 2
+CODE 4-50E 2
 CODE 86D-7FFF 2
 SFR0 0-1F 1
 SFR1 80-9F 1
@@ -228,9 +228,9 @@ BANK50 1920-196F 1
 BIGRAM 2000-2FEF 1
 COMMON 7D-7D 1
 EEDATA F000-F0FF 2
-STRCODE 4-50D 2
+STRCODE 4-50E 2
 STRCODE 86D-7FFF 2
-STRING 4-50D 2
+STRING 4-50E 2
 STRING 86D-7FFF 2
 # %LINETAB Section
 # This section enumerates the file/line to address mappings.
@@ -246,57 +246,57 @@ STRING 86D-7FFF 2
 # All other numeric values are in decimal.
 %LINETAB
 $dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
-7FD cinit CODE >4477:C:\Users\students\AppData\Local\Temp\s4ek.
-7FD cinit CODE >4480:C:\Users\students\AppData\Local\Temp\s4ek.
-7FD cinit CODE >4486:C:\Users\students\AppData\Local\Temp\s4ek.
-7FD cinit CODE >4488:C:\Users\students\AppData\Local\Temp\s4ek.
-7FE cinit CODE >4489:C:\Users\students\AppData\Local\Temp\s4ek.
-51A text18 CODE >97:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\mcc_generated_files/eusart.c
-51B text18 CODE >99:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\mcc_generated_files/eusart.c
-51B text18 CODE >101:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\mcc_generated_files/eusart.c
-51E text18 CODE >103:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\mcc_generated_files/eusart.c
-521 text18 CODE >104:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\mcc_generated_files/eusart.c
-50E text17 CODE >111:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\mcc_generated_files/eusart.c
-50F text17 CODE >113:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\mcc_generated_files/eusart.c
-512 text17 CODE >114:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\mcc_generated_files/eusart.c
-579 text16 CODE >464:C:\Program Files (x86)\Microchip\xc8\v1.42\sources\common\doprnt.c
-579 text16 CODE >533:C:\Program Files (x86)\Microchip\xc8\v1.42\sources\common\doprnt.c
-57D text16 CODE >536:C:\Program Files (x86)\Microchip\xc8\v1.42\sources\common\doprnt.c
-58F text16 CODE >541:C:\Program Files (x86)\Microchip\xc8\v1.42\sources\common\doprnt.c
-593 text16 CODE >536:C:\Program Files (x86)\Microchip\xc8\v1.42\sources\common\doprnt.c
-594 text15 CODE >207:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
-594 text15 CODE >224:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
-597 text15 CODE >225:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
-598 text15 CODE >226:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
-59A text15 CODE >227:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
-59C text15 CODE >228:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
-59D text15 CODE >229:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
-59E text15 CODE >230:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
-59F text15 CODE >231:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
-5A0 text15 CODE >232:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
-5A1 text15 CODE >233:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
-5A2 text15 CODE >234:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
-5A4 text15 CODE >235:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
-5A5 text15 CODE >236:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
-5A7 text15 CODE >238:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
-5AA text15 CODE >239:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
-5AC text15 CODE >240:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
-5B2 text15 CODE >241:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
-535 text14 CODE >55:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\mcc_generated_files/eusart.c
-535 text14 CODE >60:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\mcc_generated_files/eusart.c
-538 text14 CODE >63:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\mcc_generated_files/eusart.c
-53A text14 CODE >66:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\mcc_generated_files/eusart.c
-53C text14 CODE >69:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\mcc_generated_files/eusart.c
-53E text14 CODE >72:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\mcc_generated_files/eusart.c
-53F text14 CODE >74:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\mcc_generated_files/eusart.c
-52B text13 CODE >90:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\mcc_generated_files/mcc.c
-52B text13 CODE >93:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\mcc_generated_files/mcc.c
-52E text13 CODE >95:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\mcc_generated_files/mcc.c
-52F text13 CODE >97:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\mcc_generated_files/mcc.c
-530 text13 CODE >99:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\mcc_generated_files/mcc.c
-532 text13 CODE >101:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\mcc_generated_files/mcc.c
-533 text13 CODE >103:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\mcc_generated_files/mcc.c
-534 text13 CODE >106:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\mcc_generated_files/mcc.c
+7FD cinit CODE >4477:C:\Users\students\AppData\Local\Temp\s19g.
+7FD cinit CODE >4480:C:\Users\students\AppData\Local\Temp\s19g.
+7FD cinit CODE >4486:C:\Users\students\AppData\Local\Temp\s19g.
+7FD cinit CODE >4488:C:\Users\students\AppData\Local\Temp\s19g.
+7FE cinit CODE >4489:C:\Users\students\AppData\Local\Temp\s19g.
+51B text18 CODE >97:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\mcc_generated_files/eusart.c
+51C text18 CODE >99:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\mcc_generated_files/eusart.c
+51C text18 CODE >101:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\mcc_generated_files/eusart.c
+51F text18 CODE >103:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\mcc_generated_files/eusart.c
+522 text18 CODE >104:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\mcc_generated_files/eusart.c
+50F text17 CODE >111:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\mcc_generated_files/eusart.c
+510 text17 CODE >113:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\mcc_generated_files/eusart.c
+513 text17 CODE >114:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\mcc_generated_files/eusart.c
+57A text16 CODE >464:C:\Program Files (x86)\Microchip\xc8\v1.42\sources\common\doprnt.c
+57A text16 CODE >533:C:\Program Files (x86)\Microchip\xc8\v1.42\sources\common\doprnt.c
+57E text16 CODE >536:C:\Program Files (x86)\Microchip\xc8\v1.42\sources\common\doprnt.c
+590 text16 CODE >541:C:\Program Files (x86)\Microchip\xc8\v1.42\sources\common\doprnt.c
+594 text16 CODE >536:C:\Program Files (x86)\Microchip\xc8\v1.42\sources\common\doprnt.c
+595 text15 CODE >207:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
+595 text15 CODE >224:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
+598 text15 CODE >225:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
+599 text15 CODE >226:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
+59B text15 CODE >227:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
+59D text15 CODE >228:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
+59E text15 CODE >229:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
+59F text15 CODE >230:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
+5A0 text15 CODE >231:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
+5A1 text15 CODE >232:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
+5A2 text15 CODE >233:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
+5A3 text15 CODE >234:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
+5A5 text15 CODE >235:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
+5A6 text15 CODE >236:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
+5A8 text15 CODE >238:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
+5AB text15 CODE >239:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
+5AD text15 CODE >240:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
+5B3 text15 CODE >241:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
+536 text14 CODE >55:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\mcc_generated_files/eusart.c
+536 text14 CODE >60:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\mcc_generated_files/eusart.c
+539 text14 CODE >63:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\mcc_generated_files/eusart.c
+53B text14 CODE >66:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\mcc_generated_files/eusart.c
+53D text14 CODE >69:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\mcc_generated_files/eusart.c
+53F text14 CODE >72:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\mcc_generated_files/eusart.c
+540 text14 CODE >74:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\mcc_generated_files/eusart.c
+52C text13 CODE >90:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\mcc_generated_files/mcc.c
+52C text13 CODE >93:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\mcc_generated_files/mcc.c
+52F text13 CODE >95:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\mcc_generated_files/mcc.c
+530 text13 CODE >97:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\mcc_generated_files/mcc.c
+531 text13 CODE >99:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\mcc_generated_files/mcc.c
+533 text13 CODE >101:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\mcc_generated_files/mcc.c
+534 text13 CODE >103:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\mcc_generated_files/mcc.c
+535 text13 CODE >106:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\mcc_generated_files/mcc.c
 65E text12 CODE >50:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\mcc_generated_files/pin_manager.c
 65E text12 CODE >52:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\mcc_generated_files/pin_manager.c
 660 text12 CODE >53:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\mcc_generated_files/pin_manager.c
@@ -323,16 +323,16 @@ $dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
 68A text12 CODE >81:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\mcc_generated_files/pin_manager.c
 68B text12 CODE >83:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\mcc_generated_files/pin_manager.c
 690 text12 CODE >85:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\mcc_generated_files/pin_manager.c
-522 text11 CODE >82:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\mcc_generated_files/mcc.c
-522 text11 CODE >85:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\mcc_generated_files/mcc.c
-525 text11 CODE >86:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\mcc_generated_files/mcc.c
-528 text11 CODE >87:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\mcc_generated_files/mcc.c
-52A text11 CODE >88:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\mcc_generated_files/mcc.c
-513 text10 CODE >106:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
-513 text10 CODE >112:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
-515 text10 CODE >113:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
-517 text10 CODE >114:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
-519 text10 CODE >115:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
+523 text11 CODE >82:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\mcc_generated_files/mcc.c
+523 text11 CODE >85:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\mcc_generated_files/mcc.c
+526 text11 CODE >86:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\mcc_generated_files/mcc.c
+529 text11 CODE >87:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\mcc_generated_files/mcc.c
+52B text11 CODE >88:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\mcc_generated_files/mcc.c
+514 text10 CODE >106:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
+514 text10 CODE >112:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
+516 text10 CODE >113:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
+518 text10 CODE >114:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
+51A text10 CODE >115:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
 691 text9 CODE >117:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
 691 text9 CODE >119:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
 694 text9 CODE >121:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
@@ -364,12 +364,12 @@ $dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
 6D1 text9 CODE >177:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
 6D1 text9 CODE >180:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
 6D3 text9 CODE >181:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
-540 text8 CODE >243:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
-540 text8 CODE >244:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
-543 text8 CODE >246:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
-544 text8 CODE >248:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
-546 text8 CODE >249:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
-54A text8 CODE >250:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
+541 text8 CODE >243:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
+541 text8 CODE >244:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
+544 text8 CODE >246:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
+545 text8 CODE >248:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
+547 text8 CODE >249:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
+54B text8 CODE >250:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
 732 text7 CODE >283:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
 732 text7 CODE >285:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
 739 text7 CODE >289:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
@@ -427,39 +427,39 @@ $dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
 7F8 text7 CODE >404:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
 7FA text7 CODE >407:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
 7FA text7 CODE >410:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
-562 text6 CODE >253:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
-562 text6 CODE >255:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
-569 text6 CODE >257:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
-569 text6 CODE >260:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
-56C text6 CODE >262:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
-56E text6 CODE >264:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
-56F text6 CODE >265:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
-570 text6 CODE >266:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
-571 text6 CODE >267:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
-572 text6 CODE >269:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
-572 text6 CODE >272:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
-574 text6 CODE >273:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
-574 text6 CODE >276:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
-576 text6 CODE >277:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
-576 text6 CODE >280:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
-5B3 text5 CODE >24:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
-5B3 text5 CODE >27:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
-5BC text5 CODE >29:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
-5BF text5 CODE >30:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
-5C2 text5 CODE >31:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
-5C4 text5 CODE >32:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
-5CD text5 CODE >27:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
-54F text4 CODE >191:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
-54F text4 CODE >193:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
-556 text4 CODE >194:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
-556 text4 CODE >197:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
-559 text4 CODE >198:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
-55B text4 CODE >200:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
-55C text4 CODE >201:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
-55D text4 CODE >202:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
-55E text4 CODE >203:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
-55F text4 CODE >205:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
-561 text4 CODE >206:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
+563 text6 CODE >253:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
+563 text6 CODE >255:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
+56A text6 CODE >257:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
+56A text6 CODE >260:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
+56D text6 CODE >262:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
+56F text6 CODE >264:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
+570 text6 CODE >265:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
+571 text6 CODE >266:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
+572 text6 CODE >267:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
+573 text6 CODE >269:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
+573 text6 CODE >272:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
+575 text6 CODE >273:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
+575 text6 CODE >276:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
+577 text6 CODE >277:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
+577 text6 CODE >280:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
+5B4 text5 CODE >24:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
+5B4 text5 CODE >27:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
+5BD text5 CODE >29:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
+5C0 text5 CODE >30:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
+5C4 text5 CODE >31:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
+5C6 text5 CODE >32:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
+5CE text5 CODE >27:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
+550 text4 CODE >191:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
+550 text4 CODE >193:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
+557 text4 CODE >194:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
+557 text4 CODE >197:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
+55A text4 CODE >198:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
+55C text4 CODE >200:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
+55D text4 CODE >201:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
+55E text4 CODE >202:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
+55F text4 CODE >203:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
+560 text4 CODE >205:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
+562 text4 CODE >206:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
 600 text3 CODE >82:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
 600 text3 CODE >84:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
 607 text3 CODE >85:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
@@ -475,36 +475,36 @@ $dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
 620 text3 CODE >100:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
 622 text3 CODE >101:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
 62A text3 CODE >96:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
-5D2 text2 CODE >36:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
-5D2 text2 CODE >38:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
-5D9 text2 CODE >39:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
-5D9 text2 CODE >42:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
-5DC text2 CODE >44:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
-5DE text2 CODE >46:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
-5DF text2 CODE >47:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
-5E0 text2 CODE >48:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
-5E1 text2 CODE >49:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
-5E2 text2 CODE >50:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
-5EB text2 CODE >52:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
-5EE text2 CODE >53:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
-5F1 text2 CODE >54:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
-5F3 text2 CODE >55:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
-5FB text2 CODE >50:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
-62F text1 CODE >59:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
-62F text1 CODE >61:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
-636 text1 CODE >62:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
-636 text1 CODE >65:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
-639 text1 CODE >67:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
-63B text1 CODE >69:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
-63C text1 CODE >70:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
-63D text1 CODE >71:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
-63E text1 CODE >72:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
-63F text1 CODE >73:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
-648 text1 CODE >75:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
-64B text1 CODE >76:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
-64F text1 CODE >77:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
-651 text1 CODE >78:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
-659 text1 CODE >73:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
+62F text2 CODE >36:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
+62F text2 CODE >38:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
+636 text2 CODE >39:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
+636 text2 CODE >42:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
+639 text2 CODE >44:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
+63B text2 CODE >46:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
+63C text2 CODE >47:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
+63D text2 CODE >48:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
+63E text2 CODE >49:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
+63F text2 CODE >50:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
+648 text2 CODE >52:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
+64B text2 CODE >53:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
+64F text2 CODE >54:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
+651 text2 CODE >55:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
+659 text2 CODE >50:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
+5D3 text1 CODE >59:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
+5D3 text1 CODE >61:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
+5DA text1 CODE >62:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
+5DA text1 CODE >65:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
+5DD text1 CODE >67:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
+5DF text1 CODE >69:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
+5E0 text1 CODE >70:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
+5E1 text1 CODE >71:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
+5E2 text1 CODE >72:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
+5E3 text1 CODE >73:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
+5EC text1 CODE >75:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
+5EF text1 CODE >76:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
+5F2 text1 CODE >77:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
+5F4 text1 CODE >78:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
+5FB text1 CODE >73:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
 6D5 maintext CODE >415:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
 6D5 maintext CODE >417:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
 6D8 maintext CODE >421:C:\Users\students\Documents\micro2\Lab2\Lab2_MPLABXproject\PIC16F18857_Starter_proj .X\main.c
@@ -549,7 +549,7 @@ __Hspace_2 0 0 ABS 0 - -
 __Hspace_3 0 0 ABS 0 - -
 receive_msg@results 71 0 COMMON 1 cstackCOMMON dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
 __Heeprom_data 0 0 EEDATA 3 eeprom_data -
-__end_of_sensorReset AC4 0 CODE 0 text4 dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
+__end_of_sensorReset AC6 0 CODE 0 text4 dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
 __CFG_MCLRE$ON 0 0 ABS 0 - dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
 __Hstrings 0 0 ABS 0 strings -
 __CFG_WDTCCS$SC 0 0 ABS 0 - dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
@@ -559,30 +559,30 @@ _LATC 18 0 ABS 0 - dist/default/production\PIC16F18857_Starter_proj_.X.productio
 _WPUA 1F39 0 ABS 0 - dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
 _WPUB 1F44 0 ABS 0 - dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
 _WPUC 1F4F 0 ABS 0 - dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
-___sp 0 0 STACK 2 stack C:\Users\students\AppData\Local\Temp\s4ek.obj
+___sp 0 0 STACK 2 stack C:\Users\students\AppData\Local\Temp\s19g.obj
 _main DAA 0 CODE 0 maintext dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
 btemp 7E 0 ABS 0 - dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
-start 4 0 CODE 0 init C:\Users\students\AppData\Local\Temp\s4ek.obj
-_EUSART_Write A34 0 CODE 0 text18 dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
+start 4 0 CODE 0 init C:\Users\students\AppData\Local\Temp\s19g.obj
+_EUSART_Write A36 0 CODE 0 text18 dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
 __size_of_main 0 0 ABS 0 - dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
 __CFG_SCANE$available 0 0 ABS 0 - dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
-__end_of_set_receive A34 0 CODE 0 text10 dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
+__end_of_set_receive A36 0 CODE 0 text10 dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
 __size_of_receive_msg 0 0 ABS 0 - dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
 __size_of_servoRotate30 0 0 ABS 0 - dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
 __size_of_servoRotate90 0 0 ABS 0 - dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
-__end_of_EUSART_Initialize A80 0 CODE 0 text14 dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
+__end_of_EUSART_Initialize A82 0 CODE 0 text14 dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
 __Hpowerup 0 0 CODE 0 powerup -
 printf@c 78 0 COMMON 1 cstackCOMMON dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
 printf@f 72 0 COMMON 1 cstackCOMMON dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
-_servoRotate0 B66 0 CODE 0 text5 dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
+_servoRotate0 B68 0 CODE 0 text5 dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
 __size_of_ADC_Init 0 0 ABS 0 - dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
 __size_of_SYSTEM_Initialize 0 0 ABS 0 - dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
-intlevel0 0 0 CODE 0 functab C:\Users\students\AppData\Local\Temp\s4ek.obj
-intlevel1 0 0 CODE 0 functab C:\Users\students\AppData\Local\Temp\s4ek.obj
-intlevel2 0 0 CODE 0 functab C:\Users\students\AppData\Local\Temp\s4ek.obj
-intlevel3 0 0 CODE 0 functab C:\Users\students\AppData\Local\Temp\s4ek.obj
-intlevel4 0 0 CODE 0 functab C:\Users\students\AppData\Local\Temp\s4ek.obj
-intlevel5 0 0 CODE 0 functab C:\Users\students\AppData\Local\Temp\s4ek.obj
+intlevel0 0 0 CODE 0 functab C:\Users\students\AppData\Local\Temp\s19g.obj
+intlevel1 0 0 CODE 0 functab C:\Users\students\AppData\Local\Temp\s19g.obj
+intlevel2 0 0 CODE 0 functab C:\Users\students\AppData\Local\Temp\s19g.obj
+intlevel3 0 0 CODE 0 functab C:\Users\students\AppData\Local\Temp\s19g.obj
+intlevel4 0 0 CODE 0 functab C:\Users\students\AppData\Local\Temp\s19g.obj
+intlevel5 0 0 CODE 0 functab C:\Users\students\AppData\Local\Temp\s19g.obj
 wtemp0 7E 0 ABS 0 - dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
 __Hfunctab 0 0 CODE 0 functab -
 _RC1STAbits 11D 0 ABS 0 - dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
@@ -590,8 +590,8 @@ __size_of_EUSART_Write 0 0 ABS 0 - dist/default/production\PIC16F18857_Starter_p
 servoRotate30@i 7A 0 COMMON 1 cstackCOMMON dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
 servoRotate90@i 7A 0 COMMON 1 cstackCOMMON dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
 __Hclrtext 0 0 ABS 0 clrtext -
-__end_of_servoRotate30 C00 0 CODE 0 text2 dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
-__end_of_servoRotate90 CBC 0 CODE 0 text1 dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
+__end_of_servoRotate30 CBC 0 CODE 0 text2 dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
+__end_of_servoRotate90 C00 0 CODE 0 text1 dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
 __size_of_ADC_conversion_results 0 0 ABS 0 - dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
 _ADCON0 93 0 ABS 0 - dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
 _ADCON1 94 0 ABS 0 - dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
@@ -605,22 +605,22 @@ _ANSELB 1F43 0 ABS 0 - dist/default/production\PIC16F18857_Starter_proj_.X.produ
 _ANSELC 1F4E 0 ABS 0 - dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
 __size_of_sendADCResults 0 0 ABS 0 - dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
 __size_of_servoRotate0 0 0 ABS 0 - dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
-__end_of_EUSART_Write A44 0 CODE 0 text18 dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
+__end_of_EUSART_Write A46 0 CODE 0 text18 dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
 main@msg 27 0 BANK0 1 cstackBANK0 dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
 __Lmaintext 0 0 ABS 0 maintext -
 __size_of_servoRotate120 0 0 ABS 0 - dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
 ?_printf 72 0 COMMON 1 cstackCOMMON dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
-_ADC_Init B28 0 CODE 0 text15 dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
+_ADC_Init B2A 0 CODE 0 text15 dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
 __CFG_FEXTOSC$OFF 0 0 ABS 0 - dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
-__end_of_ADC_Init B66 0 CODE 0 text15 dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
+__end_of_ADC_Init B68 0 CODE 0 text15 dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
 PIN_MANAGER_Initialize@state 70 0 COMMON 1 cstackCOMMON dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
-__end_of_servoRotate0 BA4 0 CODE 0 text5 dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
-_EUSART_Initialize A6A 0 CODE 0 text14 dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
+__end_of_servoRotate0 BA6 0 CODE 0 text5 dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
+_EUSART_Initialize A6C 0 CODE 0 text14 dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
 __size_of_putch 0 0 ABS 0 - dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
 __size_of_sensorReset 0 0 ABS 0 - dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
 _PIN_MANAGER_Initialize CBC 0 CODE 0 text12 dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
 start_initialization FFA 0 CODE 0 cinit dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
-_sensorPing AC4 0 CODE 0 text6 dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
+_sensorPing AC6 0 CODE 0 text6 dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
 _OSCFRQ 893 0 ABS 0 - dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
 __CFG_WDTCPS$WDTCPS_31 0 0 ABS 0 - dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
 _TRISAbits 11 0 ABS 0 - dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
@@ -628,16 +628,16 @@ _RC1REG 119 0 ABS 0 - dist/default/production\PIC16F18857_Starter_proj_.X.produc
 _RC1STA 11D 0 ABS 0 - dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
 _RC3PPS 1F23 0 ABS 0 - dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
 _RC6PPS 1F26 0 ABS 0 - dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
-__end_of_SYSTEM_Initialize A56 0 CODE 0 text11 dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
+__end_of_SYSTEM_Initialize A58 0 CODE 0 text11 dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
 __pcstackBANK0 20 0 BANK0 1 cstackBANK0 dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
 __size_of_set_receive 0 0 ABS 0 - dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
 _TX1REG 11A 0 ABS 0 - dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
 _TX1STA 11E 0 ABS 0 - dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
-__end_of_printf B28 0 CODE 0 text16 dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
+__end_of_printf B2A 0 CODE 0 text16 dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
 sendADCResults@nib1 20 0 BANK0 1 cstackBANK0 dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
 sendADCResults@nib2 23 0 BANK0 1 cstackBANK0 dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
 sendADCResults@nib3 24 0 BANK0 1 cstackBANK0 dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
-___int_sp 0 0 STACK 2 stack C:\Users\students\AppData\Local\Temp\s4ek.obj
+___int_sp 0 0 STACK 2 stack C:\Users\students\AppData\Local\Temp\s19g.obj
 __Hbank0 0 0 ABS 0 bank0 -
 __Hbank1 0 0 ABS 0 bank1 -
 __Hbank2 0 0 ABS 0 bank2 -
@@ -835,7 +835,7 @@ __Lsfr61 0 0 ABS 0 sfr61 -
 __Lsfr62 0 0 ABS 0 sfr62 -
 __Lsfr63 0 0 ABS 0 sfr63 -
 __Lstack 0 0 STACK 2 stack -
-__end_of_sensorPing AF2 0 CODE 0 text6 dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
+__end_of_sensorPing AF4 0 CODE 0 text6 dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
 _PORTCbits E 0 ABS 0 - dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
 __Habs1 0 0 ABS 0 abs1 -
 __Hcode 0 0 ABS 0 code -
@@ -881,12 +881,12 @@ __S0 800C 0 ABS 0 - -
 __S1 7D 0 ABS 0 - -
 __S2 0 0 ABS 0 - -
 __S3 0 0 ABS 0 - -
-_SYSTEM_Initialize A44 0 CODE 0 text11 dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
+_SYSTEM_Initialize A46 0 CODE 0 text11 dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
 __CFG_BOREN$ON 0 0 ABS 0 - dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
 servoRotate0@i 71 0 COMMON 1 cstackCOMMON dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
 __Lintentry 4 0 CODE 0 intentry -
-reset_vec 0 0 CODE 0 reset_vec C:\Users\students\AppData\Local\Temp\s4ek.obj
-_ADC_conversion_results A80 0 CODE 0 text8 dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
+reset_vec 0 0 CODE 0 reset_vec C:\Users\students\AppData\Local\Temp\s19g.obj
+_ADC_conversion_results A82 0 CODE 0 text8 dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
 __CFG_FCMEN$ON 0 0 ABS 0 - dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
 __Lstringtext1 0 0 ABS 0 stringtext1 -
 __Lstringtext2 0 0 ABS 0 stringtext2 -
@@ -896,15 +896,15 @@ __Lstringtext5 0 0 ABS 0 stringtext5 -
 __Lstringtext6 0 0 ABS 0 stringtext6 -
 __Lstringtext7 0 0 ABS 0 stringtext7 -
 __Lstringtext8 0 0 ABS 0 stringtext8 -
-__ptext10 A26 0 CODE 0 text10 dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
-__ptext11 A44 0 CODE 0 text11 dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
+__ptext10 A28 0 CODE 0 text10 dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
+__ptext11 A46 0 CODE 0 text11 dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
 __ptext12 CBC 0 CODE 0 text12 dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
-__ptext13 A56 0 CODE 0 text13 dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
-__ptext14 A6A 0 CODE 0 text14 dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
-__ptext15 B28 0 CODE 0 text15 dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
-__ptext16 AF2 0 CODE 0 text16 dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
-__ptext17 A1C 0 CODE 0 text17 dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
-__ptext18 A34 0 CODE 0 text18 dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
+__ptext13 A58 0 CODE 0 text13 dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
+__ptext14 A6C 0 CODE 0 text14 dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
+__ptext15 B2A 0 CODE 0 text15 dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
+__ptext16 AF4 0 CODE 0 text16 dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
+__ptext17 A1E 0 CODE 0 text17 dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
+__ptext18 A36 0 CODE 0 text18 dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
 __end_of_PIN_MANAGER_Initialize D22 0 CODE 0 text12 dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
 __Lbank10 0 0 ABS 0 bank10 -
 __Lbank11 0 0 ABS 0 bank11 -
@@ -966,21 +966,21 @@ __CFG_BORV$LO 0 0 ABS 0 - dist/default/production\PIC16F18857_Starter_proj_.X.pr
 __CFG_RSTOSC$HFINT1 0 0 ABS 0 - dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
 __Lcommon 0 0 ABS 0 common -
 __Lconfig 1000E 0 CONFIG 0 config -
-_printf AF2 0 CODE 0 text16 dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
+_printf AF4 0 CODE 0 text16 dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
 __CFG_CP$OFF 0 0 ABS 0 - dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
-_sensorReset A9E 0 CODE 0 text4 dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
+_sensorReset AA0 0 CODE 0 text4 dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
 __CFG_WDTE$OFF 0 0 ABS 0 - dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
 ?_ADC_conversion_results 70 0 COMMON 1 cstackCOMMON dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
 _sendADCResults E64 0 CODE 0 text7 dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
-stackhi 2FEF 0 ABS 0 - C:\Users\students\AppData\Local\Temp\s4ek.obj
-stacklo 2008 0 ABS 0 - C:\Users\students\AppData\Local\Temp\s4ek.obj
+stackhi 2FEF 0 ABS 0 - C:\Users\students\AppData\Local\Temp\s19g.obj
+stacklo 2008 0 ABS 0 - C:\Users\students\AppData\Local\Temp\s19g.obj
 sendADCResults@results 21 0 BANK0 1 cstackBANK0 dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
 _OSCCON1 88D 0 ABS 0 - dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
 _OSCCON3 88F 0 ABS 0 - dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
 _OSCSTAT 890 0 ABS 0 - dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
 _OSCTUNE 892 0 ABS 0 - dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
 _servoRotate120 C00 0 CODE 0 text3 dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
-_set_receive A26 0 CODE 0 text10 dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
+_set_receive A28 0 CODE 0 text10 dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
 __Lspace_0 0 0 ABS 0 - -
 __Lspace_1 0 0 ABS 0 - -
 __Lspace_2 0 0 ABS 0 - -
@@ -1002,14 +1002,14 @@ _PPSLOCKbits 1E8F 0 ABS 0 - dist/default/production\PIC16F18857_Starter_proj_.X.
 __Lstrings 0 0 ABS 0 strings -
 __Hreset_vec 4 0 CODE 0 reset_vec -
 __size_of_sensorPing 0 0 ABS 0 - dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
-__ptext1 C5E 0 CODE 0 text1 dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
-__ptext2 BA4 0 CODE 0 text2 dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
+__ptext1 BA6 0 CODE 0 text1 dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
+__ptext2 C5E 0 CODE 0 text2 dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
 __ptext3 C00 0 CODE 0 text3 dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
-__ptext4 A9E 0 CODE 0 text4 dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
-__ptext5 B66 0 CODE 0 text5 dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
-__ptext6 AC4 0 CODE 0 text6 dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
+__ptext4 AA0 0 CODE 0 text4 dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
+__ptext5 B68 0 CODE 0 text5 dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
+__ptext6 AC6 0 CODE 0 text6 dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
 __ptext7 E64 0 CODE 0 text7 dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
-__ptext8 A80 0 CODE 0 text8 dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
+__ptext8 A82 0 CODE 0 text8 dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
 __ptext9 D22 0 CODE 0 text9 dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
 __end_of_sendADCResults FFA 0 CODE 0 text7 dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
 __Lpowerup 0 0 CODE 0 powerup -
@@ -1033,12 +1033,12 @@ __Lfunctab 0 0 CODE 0 functab -
 _SP1BRGH 11C 0 ABS 0 - dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
 _SP1BRGL 11B 0 ABS 0 - dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
 __Lclrtext 0 0 ABS 0 clrtext -
-__end_of_ADC_conversion_results A9E 0 CODE 0 text8 dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
+__end_of_ADC_conversion_results AA0 0 CODE 0 text8 dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
 __size_of_EUSART_Initialize 0 0 ABS 0 - dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
 __pcstackCOMMON 70 0 COMMON 1 cstackCOMMON dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
 __Hend_init 8 0 CODE 0 end_init -
-_servoRotate30 BA4 0 CODE 0 text2 dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
-_servoRotate90 C5E 0 CODE 0 text1 dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
+_servoRotate30 C5E 0 CODE 0 text2 dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
+_servoRotate90 BA6 0 CODE 0 text1 dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
 putch@txData 71 0 COMMON 1 cstackCOMMON dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
 __end_of_main E64 0 CODE 0 maintext dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
 _ADACT 99 0 ABS 0 - dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
@@ -1054,20 +1054,20 @@ _RXPPS 1ECB 0 ABS 0 - dist/default/production\PIC16F18857_Starter_proj_.X.produc
 _TRISA 11 0 ABS 0 - dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
 _TRISB 12 0 ABS 0 - dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
 _TRISC 13 0 ABS 0 - dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
-__end_of_putch A26 0 CODE 0 text17 dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
+__end_of_putch A28 0 CODE 0 text17 dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
 __Hram 0 0 ABS 0 ram -
 __Lram 0 0 ABS 0 ram -
-_putch A1C 0 CODE 0 text17 dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
+_putch A1E 0 CODE 0 text17 dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
 __CFG_CPD$OFF 0 0 ABS 0 - dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
 __size_of_PIN_MANAGER_Initialize 0 0 ABS 0 - dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
-__end_of_OSCILLATOR_Initialize A6A 0 CODE 0 text13 dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
+__end_of_OSCILLATOR_Initialize A6C 0 CODE 0 text13 dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
 __CFG_PPS1WAY$ON 0 0 ABS 0 - dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
 __initialization FFA 0 CODE 0 cinit dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
 __CFG_PWRTE$OFF 0 0 ABS 0 - dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
 _PPSLOCK 1E8F 0 ABS 0 - dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
 __CFG_WRT$OFF 0 0 ABS 0 - dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
 _ANSELAbits 1F38 0 ABS 0 - dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
-_OSCILLATOR_Initialize A56 0 CODE 0 text13 dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
+_OSCILLATOR_Initialize A58 0 CODE 0 text13 dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
 # %SPLITSTAB Section
 # This section enumerates all the psect splits performed by the assembler.
 # The beginning of the section is indicated by %SPLITSTAB.
@@ -1094,24 +1094,24 @@ _OSCILLATOR_Initialize A56 0 CODE 0 text13 dist/default/production\PIC16F18857_S
 # All other numeric quantities are in decimal.
 %SEGMENTS
 cinit 0 7FD FFA 3 2
-text1 0 62F C5E 2F 2
-text2 0 5D2 BA4 2E 2
+text1 0 5D3 BA6 2D 2
+text2 0 62F C5E 2F 2
 text3 0 600 C00 2F 2
-text4 0 54F A9E 13 2
-text5 0 5B3 B66 1F 2
-text6 0 562 AC4 17 2
+text4 0 550 AA0 13 2
+text5 0 5B4 B68 1F 2
+text6 0 563 AC6 17 2
 text7 0 732 E64 CB 2
-text8 0 540 A80 F 2
+text8 0 541 A82 F 2
 text9 0 691 D22 44 2
-text10 0 513 A26 7 2
-text11 0 522 A44 9 2
+text10 0 514 A28 7 2
+text11 0 523 A46 9 2
 text12 0 65E CBC 33 2
-text13 0 52B A56 A 2
-text14 0 535 A6A B 2
-text15 0 594 B28 1F 2
-text16 0 579 AF2 1B 2
-text17 0 50E A1C 5 2
-text18 0 51A A34 8 2
+text13 0 52C A58 A 2
+text14 0 536 A6C B 2
+text15 0 595 B2A 1F 2
+text16 0 57A AF4 1B 2
+text17 0 50F A1E 5 2
+text18 0 51B A36 8 2
 maintext 0 6D5 DAA 5D 2
 cstackCOMMON 1 70 70 D 1
 cstackBANK0 1 20 20 8 1

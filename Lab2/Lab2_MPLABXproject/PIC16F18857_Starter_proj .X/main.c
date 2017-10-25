@@ -27,9 +27,9 @@ void servoRotate0() //0 Degree -> reset servo position
   for(i=0;i<50;i++)
   {
     PORTB = 1;
-    __delay_ms(1.5);
+    __delay_ms(1.4);
     PORTB = 0;
-    __delay_ms(18.5);
+    __delay_ms(18.6);
   }
 }
 
@@ -50,7 +50,7 @@ void servoRotate30() //30 Degree
   for(i=0;i<50;i++)
   {
     PORTB = 1;
-    __delay_ms(1.67);
+    __delay_ms(1.75);
     PORTB = 0;
     __delay_ms(18.33);
   }
@@ -73,9 +73,9 @@ void servoRotate90() //90 Degree
   for(i=0;i<50;i++)
   {
     PORTB = 1;
-    __delay_ms(2);
+    __delay_ms(2.1);
     PORTB = 0;
-    __delay_ms(18);
+    __delay_ms(17.9);
   }
 }
 
