@@ -37,12 +37,6 @@ void servoRotate30() //30 Degree
   {
         
   }  
-  TRISC = 0b01000000;
-  //send the ACK message to the galileo
-  PORTCbits.RC2 = 0;
-  PORTCbits.RC3 = 1;
-  PORTCbits.RC7 = 1;
-  PORTCbits.RC5 = 1;
   unsigned int i;
   for(i=0;i<50;i++)
   {
@@ -59,12 +53,6 @@ void servoRotate90() //90 Degree
   {
         
   } 
-  TRISC = 0b01000000;
-  //send the ACK message to the galileo
-  PORTCbits.RC2 = 0;
-  PORTCbits.RC3 = 1;
-  PORTCbits.RC7 = 1;
-  PORTCbits.RC5 = 1;
   unsigned int i;
   for(i=0;i<50;i++)
   {
@@ -81,12 +69,6 @@ void servoRotate120() //120 Degree
   {
         
   }
-  TRISC = 0b01000000;
-  //send the ACK message to the galileo
-  PORTCbits.RC2 = 0;
-  PORTCbits.RC3 = 1;
-  PORTCbits.RC7 = 1;
-  PORTCbits.RC5 = 1;
   unsigned int i;
   for(i=0;i<50;i++)
   {
@@ -113,50 +95,51 @@ unsigned char receive_msg()
 {
     set_receive();
     unsigned char results;
-    while(PORTCbits.RC6 == 0)
+    while(PORTCbits.RC6 == 1)
     {
         
     }
-    while(PORTCbits.RC6 == 1)
+    
+    while(PORTCbits.RC6 == 0)
     {
         if(PORTCbits.RC5 == 0 && 
            PORTCbits.RC7 == 0 &&
-           PORTCbits.RC3 == 0 &&
+           PORTCbits.RC1 == 0 &&
            PORTCbits.RC2 == 0)
         {
             results = 0x0;
         }
         else if(PORTCbits.RC5 == 0 && 
                 PORTCbits.RC7 == 0 &&
-                PORTCbits.RC3 == 0 &&
+                PORTCbits.RC1 == 0 &&
                 PORTCbits.RC2 == 1)
         {
             results = 0x1;
         }
         else if(PORTCbits.RC5 == 0 && 
                 PORTCbits.RC7 == 0 &&
-                PORTCbits.RC3 == 1 &&
+                PORTCbits.RC1 == 1 &&
                 PORTCbits.RC2 == 0)
         {
             results = 0x2;
         }
         else if(PORTCbits.RC5 == 0 && 
                 PORTCbits.RC7 == 0 &&
-                PORTCbits.RC3 == 1 &&
+                PORTCbits.RC1 == 1 &&
                 PORTCbits.RC2 == 1)
         {
             results = 0x3;
         }
         else if(PORTCbits.RC5 == 0 && 
                 PORTCbits.RC7 == 1 &&
-                PORTCbits.RC3 == 0 &&
+                PORTCbits.RC1 == 0 &&
                 PORTCbits.RC2 == 0)
         {
             results = 0x4;
         }
         else if(PORTCbits.RC5 == 0 && 
                 PORTCbits.RC7 == 1 &&
-                PORTCbits.RC3 == 0 &&
+                PORTCbits.RC1 == 0 &&
                 PORTCbits.RC2 == 1)
         {
             results = 0x5;
@@ -179,12 +162,7 @@ void sensorReset()
     {
         
     }
-    TRISC = 0b01000000;
-    //send the ACK message to the galileo
-    PORTCbits.RC2 = 0;
-    PORTCbits.RC3 = 1;
-    PORTCbits.RC7 = 1;
-    PORTCbits.RC5 = 1;
+
     //reset the servo position
     servoRotate0();
 }
@@ -234,18 +212,11 @@ unsigned int ADC_conversion_results() {
 void sensorPing()
 {
     PORTA = 1;
-    __delay_ms(100);
     while(PORTCbits.RC6 == 1)
     {
         
     }
-    TRISC = 0b01000000;
     PORTA = 0;
-    //send the ACK message to the galileo
-    PORTCbits.RC2 = 0;
-    PORTCbits.RC3 = 1;
-    PORTCbits.RC7 = 1;
-    PORTCbits.RC5 = 1;
 }
 
 void sendADCResults()
@@ -255,12 +226,6 @@ void sendADCResults()
     {
         
     }
-    TRISC = 0b01000000;
-    //send the ACK message to the galileo
-    PORTCbits.RC2 = 0;
-    PORTCbits.RC3 = 1;
-    PORTCbits.RC7 = 1;
-    PORTCbits.RC5 = 1;
     results = ADC_conversion_results();
     //???????
 }
@@ -292,6 +257,12 @@ void main (void)
         servoRotate120();
     else
         (void) 0;
+    TRISC = 0b01000000;
+    //send the ACK message to the galileo
+    PORTCbits.RC2 = 0;
+    PORTCbits.RC1 = 1;
+    PORTCbits.RC7 = 1;
+    PORTCbits.RC5 = 1;
     } 
 }
 
