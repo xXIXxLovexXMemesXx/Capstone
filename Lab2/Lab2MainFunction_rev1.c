@@ -290,7 +290,7 @@ int readNibble(char* d0,
     setGPIODirection(d1, GPIO_DIRECTION_IN);
     setGPIODirection(d2, GPIO_DIRECTION_IN);
     setGPIODirection(d3, GPIO_DIRECTION_IN);
-    setGPIODirection(strobe, GPIO_DIRECTION_OUT);
+    //setGPIODirection(strobe, GPIO_DIRECTION_OUT);
 
     //TODO SET MODE TO HIGHZ FOR INPUT
     //start the bus protocol
@@ -330,6 +330,9 @@ int readNibble(char* d0,
         printf("Uncaught error reading nibble from the bus");
         return ERROR;
     }
+    //leave strobe high for a bit
+    usleep(STROBE_DELAY);
+
     //4: Pull strobe low again to signal that data has been read
     writeGPIO(strobe, LOW);
     usleep(STROBE_DELAY);
@@ -547,23 +550,23 @@ void adc_value()
         setGPIODirection(fileHandleGPIO_6, GPIO_DIRECTION_IN);
         setGPIODirection(fileHandleGPIO_7, GPIO_DIRECTION_IN);
 
-        for(i = 0; i < 3; i++) //testing for the logic analyzer
-        {
-          setGPIOMode(fileHandleGPIO_S, GPIO_MODE_PULLUP);
-          writeGPIO(fileHandleGPIO_S, HIGH);
-          usleep(3*STROBE_DELAY);
-          setGPIOMode(fileHandleGPIO_S, GPIO_MODE_PULLDOWN);
-          writeGPIO(fileHandleGPIO_S, LOW);
-          usleep(STROBE_DELAY);
-          setGPIOMode(fileHandleGPIO_S, GPIO_MODE_PULLUP);
-          writeGPIO(fileHandleGPIO_S, HIGH);
-          usleep(STROBE_DELAY);
-          setGPIOMode(fileHandleGPIO_S, GPIO_MODE_PULLDOWN);
-          writeGPIO(fileHandleGPIO_S, LOW);
-          usleep(STROBE_DELAY);
-        }
+        // for(i = 0; i < 3; i++) //testing for the logic analyzer just to watch the strobe
+        // {
+        //   setGPIOMode(fileHandleGPIO_S, GPIO_MODE_PULLUP);
+        //   writeGPIO(fileHandleGPIO_S, HIGH);
+        //   usleep(3*STROBE_DELAY);
+        //   setGPIOMode(fileHandleGPIO_S, GPIO_MODE_PULLDOWN);
+        //   writeGPIO(fileHandleGPIO_S, LOW);
+        //   usleep(STROBE_DELAY);
+        //   setGPIOMode(fileHandleGPIO_S, GPIO_MODE_PULLUP);
+        //   writeGPIO(fileHandleGPIO_S, HIGH);
+        //   usleep(STROBE_DELAY);
+        //   setGPIOMode(fileHandleGPIO_S, GPIO_MODE_PULLDOWN);
+        //   writeGPIO(fileHandleGPIO_S, LOW);
+        //   usleep(STROBE_DELAY);
+        // }
 
-        expect to receive 3 messages containing ADC values, msn first
+        //expect to receive 3 messages containing ADC values, msn first
         usleep(STROBE_DELAY);
         for(i = 8; i >= 0; i -= 4)
         {
