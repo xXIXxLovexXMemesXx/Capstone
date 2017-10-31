@@ -1,9 +1,9 @@
 
 
-Microchip Technology PIC LITE Macro Assembler V1.42 build -159332390 
-                                                                                               Wed Oct 25 15:59:08 2017
+Microchip Technology PIC LITE Macro Assembler V1.43 build -156212558 
+                                                                                               Mon Oct 30 21:02:23 2017
 
-Microchip Technology Omniscient Code Generator v1.42 (Free mode) build 201704130522
+Microchip Technology Omniscient Code Generator v1.43 (Free mode) build 201707250354
      1                           	processor	16F18857
      2                           	opt	pw 120
      3                           	opt	lm
@@ -39,8 +39,8 @@ Microchip Technology Omniscient Code Generator v1.42 (Free mode) build 201704130
     33                           	psect	text18,local,class=CODE,merge=1,delta=2
     34                           	dabs	1,0x7E,2
     35  0000                     
-    36                           ; Version 1.42
-    37                           ; Generated 13/04/2017 GMT
+    36                           ; Version 1.43
+    37                           ; Generated 25/07/2017 GMT
     38                           ; 
     39                           ; Copyright © 2017, Microchip Technology Inc. and its subsidiaries ("Microchip")
     40                           ; All rights reserved.
@@ -4705,7 +4705,7 @@ Microchip Technology Omniscient Code Generator v1.42 (Free mode) build 201704130
   4451  057A                     __ptext16:	
   4452 ;; *************** function _printf *****************
   4453 ;; Defined at:
-  4454 ;;		line 464 in file "C:\Program Files (x86)\Microchip\xc8\v1.42\sources\common\doprnt.c"
+  4454 ;;		line 464 in file "C:\Program Files (x86)\Microchip\xc8\v1.43\sources\common\doprnt.c"
   4455 ;; Parameters:    Size  Location     Type
   4456 ;;  f               2    2[COMMON] PTR const unsigned char 
   4457 ;;		 -> STR_8(15), STR_7(4), STR_6(6), STR_5(17), 
@@ -5630,8 +5630,8 @@ BITBANK50           50      0       0     106        0.0%
 BANK50              50      0       0     107        0.0%
 
 
-Microchip Technology PIC Macro Assembler V1.42 build -159332390 
-Symbol Table                                                                                   Wed Oct 25 15:59:08 2017
+Microchip Technology PIC Macro Assembler V1.43 build -156212558 
+Symbol Table                                                                                   Mon Oct 30 21:02:23 2017
 
                     __CFG_CP$OFF 0000                               l31 051C                    servoRotate0@i 0071  
                     __CFG_LVP$ON 0000                      __CFG_ZCD$ON 0000                              l201 06B1  

@@ -58,8 +58,8 @@ __Lstringtext7 0 0 ABS 0
 __pstringtext7 869 0 STRCODE 0
 _ADC_Init 595 0 CODE 0
 servoRotate0@i 71 0 COMMON 1
-__Hfunctab 0 0 CODE 0
-__Lfunctab 0 0 CODE 0
+__Hfunctab 0 0 ENTRY 0
+__Lfunctab 0 0 ENTRY 0
 _ADCON0 93 0 ABS 0
 _ADCON1 94 0 ABS 0
 _ADCON2 95 0 ABS 0
@@ -493,15 +493,15 @@ sendADCResults@nib3 24 0 BANK0 1
 __pstringtext5 856 0 STRCODE 0
 __size_of_servoRotate30 0 0 ABS 0
 __size_of_servoRotate90 0 0 ABS 0
-intlevel0 0 0 CODE 0
+intlevel0 0 0 ENTRY 0
 __CFG_WDTE$OFF 0 0 ABS 0
-intlevel1 0 0 CODE 0
+intlevel1 0 0 ENTRY 0
 __size_of_sensorPing 0 0 ABS 0
-intlevel2 0 0 CODE 0
+intlevel2 0 0 ENTRY 0
 __end_of_sensorReset 563 0 CODE 0
-intlevel3 0 0 CODE 0
-intlevel4 0 0 CODE 0
-intlevel5 0 0 CODE 0
+intlevel3 0 0 ENTRY 0
+intlevel4 0 0 ENTRY 0
+intlevel5 0 0 ENTRY 0
 __size_of_sensorReset 0 0 ABS 0
 __HcstackCOMMON 0 0 ABS 0
 __LcstackCOMMON 0 0 ABS 0
@@ -552,7 +552,7 @@ text10 A28 A35 CODE A28 0
 text17 A1E A27 CODE A1E 0
 %locals
 dist/default/production\PIC16F18857_Starter_proj_.X.production.obj
-C:\Users\students\AppData\Local\Temp\s19g.
+C:\Users\Andy\AppData\Local\Temp\sbbs.
 4477 7FD 0 CODE 0
 4480 7FD 0 CODE 0
 4486 7FD 0 CODE 0
@@ -830,7 +830,7 @@ main.c
 239 5AB 0 CODE 0
 240 5AD 0 CODE 0
 241 5B3 0 CODE 0
-C:\Program Files (x86)\Microchip\xc8\v1.42\sources\common\doprnt.c
+C:\Program Files (x86)\Microchip\xc8\v1.43\sources\common\doprnt.c
 464 57A 0 CODE 0
 533 57A 0 CODE 0
 536 57E 0 CODE 0

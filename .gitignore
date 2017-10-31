@@ -1,9 +1,13 @@
 #just a template. Later we'll ignore all of the binaries and other things we dont want
 
-#just for kicks, don't upload our lab report Word docs
+#don't upload our lab report Word docs
 *MacGregor.doc
 *MacGregor.docx
 *Colwell.docx
 *Colwell.doc
 *Velis.doc
 *Velis.docx
+
+#Don't track executables or zipped submission archives
+*.exe
+*.zip

@@ -1,11 +1,11 @@
-Microchip MPLAB XC8 Compiler V1.42 ()
+Microchip MPLAB XC8 Compiler V1.43 ()
 
 Linker command line:
 
--W-3 --edf=C:\Program Files (x86)\Microchip\xc8\v1.42\dat\en_msgs.txt -cs \
+-W-3 --edf=C:\Program Files (x86)\Microchip\xc8\v1.43\dat\en_msgs.txt -cs \
   -h+dist/default/production\PIC16F18857_Starter_proj_.X.production.sym \
   --cmf=dist/default/production\PIC16F18857_Starter_proj_.X.production.cmf \
-  -z -Q16F18857 -oC:\Users\students\AppData\Local\Temp\s19g.2 \
+  -z -Q16F18857 -oC:\Users\Andy\AppData\Local\Temp\sbbs.2 \
   -Mdist/default/production/PIC16F18857_Starter_proj_.X.production.map -E1 \
   -ver=XC8 -ASTACK=02008h-02fefh -pstack=STACK -ACODE=00h-07FFhx16 \
   -ASTRCODE=00h-07FFFh -ASTRING=00h-0FFhx128 -ACONST=00h-0FFhx128 \
@@ -51,10 +51,10 @@ Linker command line:
   -ASFR58=01D00h-01D6Fh -ASFR59=01D80h-01DEFh -ASFR60=01E00h-01E6Fh \
   -ASFR61=01E80h-01EEFh -ASFR62=01F00h-01F6Fh -ASFR63=01F80h-01FEFh \
   -preset_vec=00h,intentry,init,end_init -ppowerup=CODE -pcinit=CODE \
-  -pfunctab=CODE -ACONFIG=08007h-0800Bh -pconfig=CONFIG -DCONFIG=2 \
+  -pfunctab=ENTRY -ACONFIG=08007h-0800Bh -pconfig=CONFIG -DCONFIG=2 \
   -AIDLOC=08000h-08003h -pidloc=IDLOC -DIDLOC=2 -AEEDATA=00h-0FFh/0F000h \
   -peeprom_data=EEDATA -DEEDATA=2 -DCODE=2 -DSTRCODE=2 -DSTRING=2 -DCONST=2 \
-  -DENTRY=2 -k C:\Users\students\AppData\Local\Temp\s19g.obj \
+  -DENTRY=2 -k C:\Users\Andy\AppData\Local\Temp\sbbs.obj \
   dist/default/production\PIC16F18857_Starter_proj_.X.production.obj 
 
 Object code version is 3.11
@@ -64,7 +64,7 @@ Machine type is 16F18857
 
 
                 Name                               Link     Load   Length Selector   Space Scale
-C:\Users\students\AppData\Local\Temp\s19g.obj
+C:\Users\Andy\AppData\Local\Temp\sbbs.obj
                 end_init                              2        2        2        0       0
                 reset_vec                             0        0        2        0       0
                 config                             8007     8007        5    1000E       0
@@ -1657,7 +1657,7 @@ Total ram usage:        0 bytes
 
  *************** function _printf *****************
  Defined at:
-		line 464 in file "C:\Program Files (x86)\Microchip\xc8\v1.42\sources\common\doprnt.c"
+		line 464 in file "C:\Program Files (x86)\Microchip\xc8\v1.43\sources\common\doprnt.c"
  Parameters:    Size  Location     Type
   f               2    2[COMMON] PTR const unsigned char 
 		 -> STR_8(15), STR_7(4), STR_6(6), STR_5(17), 
@@ -1770,6 +1770,11 @@ mcc_generated_files/pin_manager.c
 
 mcc_generated_files/pin_manager.c estimated size: 52
 
+C:\Program Files (x86)\Microchip\xc8\v1.43\sources\common\doprnt.c
+		_printf        		CODE           	057A	0000	28
+
+C:\Program Files (x86)\Microchip\xc8\v1.43\sources\common\doprnt.c estimated size: 28
+
 shared
 		__initialization		CODE           	07FD	0000	1
 
@@ -1780,11 +1785,6 @@ mcc_generated_files/mcc.c
 		_SYSTEM_Initialize		CODE           	0523	0000	10
 
 mcc_generated_files/mcc.c estimated size: 21
-
-C:\Program Files (x86)\Microchip\xc8\v1.42\sources\common\doprnt.c
-		_printf        		CODE           	057A	0000	28
-
-C:\Program Files (x86)\Microchip\xc8\v1.42\sources\common\doprnt.c estimated size: 28
 
 mcc_generated_files/eusart.c
 		_putch         		CODE           	050F	0000	6
