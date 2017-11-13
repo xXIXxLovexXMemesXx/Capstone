@@ -13,6 +13,8 @@ int main()
 	char smd[20];
 	char smd2[20];
 	int cmd;
+	double temp_Reading;
+	double temp_Thresh = 0;
 	//init_temp_sensor();
 	time_t date = time(NULL);
 	char* cdate;
@@ -40,8 +42,29 @@ int main()
 		scanf("%d", &cmd);
 		if (cmd == 1)
 		{
-			//get_temp_in_f();
-			printf("fuck this shit TURN UP THE HEAT\n");
+			temp_Reading = get_temp_in_f();
+			printf("%lf\n", temp_Reading);
+			date = time(NULL);
+			cdate = asctime(localtime(&date));
+			if (temp_Reading > temp_Thresh)
+			{
+				for (int i = 0; i < 25; i++)
+				{
+					if (cdate[i] == 32)
+					{
+						cdate[i] = '_';
+					}
+					else if (cdate[i] == 58)
+					{
+						cdate[i] = '_';
+					}
+					else if (cdate[i] == 10)
+					{
+						cdate[i] = '_';
+					}
+				}
+				capture_and_save_image(cdate);
+			}
 		}
 		else if (cmd == 2)
 		{
