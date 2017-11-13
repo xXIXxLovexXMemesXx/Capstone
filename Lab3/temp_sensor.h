@@ -1,9 +1,9 @@
 
 #ifndef TEMP_SENSOR_H
 #define TEMP_SENSOR_H
-#endif
 
-#include "mraa.h"
+
+#include "mraa.hpp"
 
 #define TEMPERATURE_REGISTER 0x00	//According to table 1 in the TMP102 Datasheet
 #define CONFIG_REGISTER 0x01	  	//These values will determine what register we are
@@ -11,27 +11,26 @@
 #define T_HIGH_REGISTER 0x03
 
 #define TMP102Address 0x48
+using namespace mraa;
 
-bool init_temp_sensor();
+
 double get_temp(); // temperature in C
 
-bool init_temp_sensor(){
-	var i2c.new mraa.I2c(0);
+double get_temp(){
+	I2c i2c(0);
 	i2c.address(TMP102Address);
 
+uint8_t dataReg [2];
+
+int buffer = i2c.read(dataReg,2); // read two bytes from the registers
+
+int temperature = ((dataReg[0]<<8 | dataReg[1]) >> 4);
+
+return temperature*0.0625;
 }
+#endif
 
-double get_temp(){
 
-i2c.address(TMP102Address);
-
-int buffer = i2c.read(2); // read two bytes from the registers
-int msb = i2c.readByte();
-int lsb = i2c.readByte();
-int temperature = ((msb << 8) | lsb) >> 4;
-
-return temperature
-}
 
 /*/Config register kinda confused on if we need this defined or if a single write using mraa write/read function will work
 os = 0;
