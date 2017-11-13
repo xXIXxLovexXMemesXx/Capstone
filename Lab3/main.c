@@ -43,7 +43,7 @@ int main()
 		scanf("%d", &cmd);
 		if (cmd == 1)
 		{
-			temp_Reading = get_temp_in_f();
+			temp_Reading = get_temp();
 			printf("%lf\n", temp_Reading);
 			date = time(NULL);
 			cdate = asctime(localtime(&date));
