@@ -7,9 +7,10 @@
 #include <time.h>
 #include <string.h>
 #define _CRT_SECURE_NO_WARNINGS 
-
+void temp_test();
 int main()
 {
+
 	char smd[20];
 	char smd2[20];
 	int cmd;
@@ -19,9 +20,9 @@ int main()
 	time_t date = time(NULL);
 	char* cdate;
 	cdate = asctime(localtime(&date));
-	printf("%s", cdate);
-	for (int i = 0; i < 25; i++)
-	{
+	printf("%s", cdate);++)
+
+	for (int i = 0; i < 25; i	{
 		if (cdate[i] == 32)
 		{
 			cdate[i] = '_';
@@ -77,26 +78,12 @@ int main()
 				{
 					cdate[i] = '_';
 				}
-				else if (cdate[i] == 58)
-				{
-					cdate[i] = '_';
-				}
-				else if (cdate[i] == 10)
-				{
-					cdate[i] = '_';
-				}
-			}
-			capture_and_save_image(cdate);
-		}
-		else if (cmd == 3)
-		{
-			return 0;
-		}
-		else
-		{
-			printf("Improper input please enter a number 1-3\n");
-		}
-	}
-
 }
 
+void temp_test()
+{
+	double d = get_temp();
+d = d *0.0625;
+	printf("%f C\n", d);
+	//exit();
+}
