@@ -15,14 +15,14 @@ int main()
 	char smd2[20];
 	int cmd;
 	double temp_Reading;
-	double temp_Thresh = 0;
+	double temp_Thresh = 30;
 	//init_temp_sensor();
 	time_t date = time(NULL);
 	char* cdate;
 	cdate = asctime(localtime(&date));
-	printf("%s", cdate);++)
 
-	for (int i = 0; i < 25; i	{
+	for (int i = 0; i < 25; i++)
+  {
 		if (cdate[i] == 32)
 		{
 			cdate[i] = '_';
@@ -39,12 +39,12 @@ int main()
 	printf("%s", cdate);
 	while (1)
 	{
-		printf("\nEnter the Command you would like to do (1 temp sensor, 2 take a pic, 3 exit)\n");
+		printf("\nEnter the Command you would like to do (1 temp sensor-triggered pic, 2 take a pic, 3 exit)\n");
 		scanf("%d", &cmd);
 		if (cmd == 1)
 		{
 			temp_Reading = get_temp();
-			printf("%lf\n", temp_Reading);
+			printf("Temperature:%lf degrees C\n", temp_Reading);
 			date = time(NULL);
 			cdate = asctime(localtime(&date));
 			if (temp_Reading > temp_Thresh)
@@ -64,20 +64,39 @@ int main()
 						cdate[i] = '_';
 					}
 				}
+        printf("Taking picture: %s \n", cdate);
 				capture_and_save_image(cdate);
-			}
+			} else {
+        printf("Not hot enough for picture -- \n\tneeds to be greater than %f\n", temp_Thresh);
+      }
 		}
 		else if (cmd == 2)
-		{
-			date = time(NULL);
-			cdate = asctime(localtime(&date));
-			printf("%s", cdate);
-			for (int i = 0; i < 25; i++)
-			{
-				if (cdate[i] == 32)
-				{
-					cdate[i] = '_';
-				}
+    {
+      date = time(NULL);
+      cdate = asctime(localtime(&date));
+      printf("%s", cdate);
+      for (int i = 0; i < 25; i++)
+      {
+        if (cdate[i] == 32)
+        {
+          cdate[i] = '_';
+        }
+        else if (cdate[i] == 58)
+        {
+          cdate[i] = '_';
+        }
+        else if (cdate[i] == 10)
+        {
+          cdate[i] = '_';
+        }
+      }
+      capture_and_save_image(cdate);
+    }
+    else if (cmd == 3)
+    {
+      break;
+    }
+  }
 }
 
 void temp_test()
