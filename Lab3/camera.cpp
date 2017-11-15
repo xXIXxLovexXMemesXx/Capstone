@@ -10,32 +10,38 @@ using namespace std;
 //if not, return false.
 bool capture_and_save_image(char* filename)
 {
+  //init webcam on video0 interface
   VideoCapture ourCam;
   ourCam.open(0);
 
   Mat image;
   bool camIsThere = false;
 
-  camIsThere = ourCam.read(image); //read a frame from the vid camera into image
+  //read a frame from the vid camera into image
+  camIsThere = ourCam.read(image); 
 
+  //test if camera not connected
   if(!camIsThere)
-    return false; //camera not connected somehow
+    return false; 
+  //test if a blank image was grabbed
   if(image.empty())
-    return false; //blank frame grabbed
+    return false; 
 
   //make jpeg format parameters
   vector<int> compression_params;
   compression_params.push_back(IMWRITE_JPEG_QUALITY);
   compression_params.push_back(95);
 
+  //make filename
   string fn = string(filename) + string(".jpeg");
   
   //Code from inWrite() example in OpenCV docs
+  //try to save to file
   try{
     imwrite(fn, image, compression_params);
   }
   catch (Exception& ex) {
-    cout << "Issue converting to PNG format: " << ex.what() << endl;
+    cout << "Issue saving file: " << ex.what() << endl;
     return false;
   }
 
