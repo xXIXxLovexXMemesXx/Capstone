@@ -1,69 +1,87 @@
 
-#include <pthreads.h>
+#include <pthread.h>
 #include <time.h>
+#include <unistd.h>
 
 #include "net.h"
 
-static char m_picStatus[10];
-static int m_picAdcValue = 0;
-static char m_filename[MAX_FILENAME];
-static char m_timeStamp[MAX_TIMESTAMP];
 
-
-void init()
+//format the data to be sent to the server into the buffer
+//length is the length of the length of the buffer
+void getPostRequest(char* buffer, int length, int picAdcValue, char* picStatus, char* timeStamp, char* filename)
 {
-  strcpy(m_picStatus, PIC_ERROR)
-  strncpy(m_filename, DEFAULT_FILENAME, MAX_FILENAME);
-}
-
-//Loads the dynamic server data.
-//if fn is unknown or unavailable, use a empty string
-void setDynamicData(bool picStatusOnline, int adcData, char* fn)
-{
-  //set pic status 
-  if(picStatusOnline)
-    strcpy(m_picStatus, PIC_ONLINE);
-  else
-    strcpy(m_picStatus, PIC_ERROR);
-
-  //set adc value directly
-  m_picAdcValue = adcData;
-
-  //set filename if its there. Empty filename gets default filename
-  if(!fn)
-  {
-    strcpy(m_filename, DEFAULT_FILENAME);
-  }
-  else
-  {
-    if(strlen(fn) > MAX_FILENAME)
-      strcpy(m_filename, "Filename limit exceded");
-    else
-      strncpy(m_filename, fn, MAX_FILENAME);
-  }
-
-}
-  
-//format the data to be sent to the server into a URL and return it.
-//need to free when done
-char* getPostRequest()
-{
-  char* url = malloc(MAX_POST);
 
   //get timestamp and set member
   //YYYY-MM-DD_HH:MM:SS
   time_t date = time(NULL);
-  strftime(m_timeStamp, MAX_TIMESTAMP, "%F_%T", localtime(&date)); //For format string details: http://man7.org/linux/man-pages/man3/strftime.3.html
-
+  strftime(timeStamp, MAX_TIMESTAMP, "%F_%T", localtime(&date)); //For format string details: http://man7.org/linux/man-pages/man3/strftime.3.html
 
   //format the whole url
-  int ret = snprintf(url, MAX_POST, 
+  int ret = snprintf(buffer,length, 
     "http://%s:%d/update?/id=%d&password=%s&name=%s&data=%d&status=%s&timestamp=%s&filename=%s",
-    SERVER_HOSTNAME, SERVER_PORTNUMBER, GROUP_ID, PASSWORD, STUDENT_NAME, m_picAdcValue,
-    m_picStatus, m_timeStamp, m_filename);
+    SERVER_HOSTNAME, SERVER_PORTNUMBER, GROUP_ID, PASSWORD, STUDENT_NAME, picAdcValue,
+    picStatus, timeStamp, filename);
   
-  if(ret >= MAX_POST)
-    strcpy(url, "POST msg length limit exceded");
+  //one way to report an error
+  if(ret >= length)
+    strcpy(buffer, "POST msg length limit exceded");
+}
 
-  return url;
+//modified from test_client.c
+//all it does is use curl to post a URL
+void HTTP_POST(const char* url){ //} const char* image, int size){
+  CURL *curl;
+  CURLcode res;
+
+  curl = curl_easy_init();
+  if(curl)
+  {
+    curl_easy_setopt(curl, CURLOPT_URL, url);
+    curl_easy_setopt(curl, CURLOPT_POST, 1);
+    //curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE,(long) size);
+    //curl_easy_setopt(curl, CURLOPT_POSTFIELDS, image);
+    
+    res = curl_easy_perform(curl);
+    if(res != CURLE_OK)
+            fprintf(stderr, "curl_easy_perform() failed: %s\n",curl_easy_strerror(res));
+    curl_easy_cleanup(curl);
+  }
+}
+
+
+//Main thread loop
+void* serverPostLoop(void * x)
+{
+  char picStatus[10];
+  strcpy(picStatus, PIC_ERROR);
+  char filename[MAX_FILENAME];
+  strncpy(filename, DEFAULT_FILENAME, MAX_FILENAME);
+  char timeStamp[MAX_TIMESTAMP];
+  int picAdcValue = 0;
+
+  char postBuffer[MAX_POST];
+  
+  while(true)
+  {
+    sleep(2);
+
+    //update data
+    server_data currentState = getCurrentState();
+    strncpy(filename, currentState.fileName, MAX_FILENAME);
+    if(currentState.picOnline)
+    {
+      strncpy(picStatus,PIC_ONLINE, 10);
+    }
+    else
+    {
+      strncpy(picStatus, PIC_ERROR, 10);
+    }
+    picAdcValue = currentState.adcData;
+    
+    //format post string 
+    getPostRequest(postBuffer, MAX_POST, picAdcValue, picStatus, timeStamp, filename);
+
+    //send it
+    HTTP_POST(postBuffer);
+  }
 }

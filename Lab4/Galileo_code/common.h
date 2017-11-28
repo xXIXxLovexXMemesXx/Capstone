@@ -1,10 +1,11 @@
 #ifndef COMMON_H
 #define COMMON_H
 
-#include <pthreads.h>
+#include <stdbool.h>
 
 //constants
-const int MAX_FILENAME = 256;
+#define MAX_FILENAME            256
+const char* DEFAULT_FILENAME = "No face detected";
 
 //structure to hold data that is shared between threads
 typedef struct {
@@ -13,9 +14,6 @@ typedef struct {
   char fileName[MAX_FILENAME]; //filename of last image taken
 }server_data;
 
-
-//shared data variable name + mutex
-extern server_data myData;
-extern mutex_t myData_m;
-
+//gets the current global myData object
+server_data getCurrentState();
 #endif
