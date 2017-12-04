@@ -6,8 +6,10 @@
 
 #include "common.h"
 #include "net.h"
+#include "sensor.h"
 //#define _CRT_SECURE_NO_WARNINGS 
 
+//hold the data to send to the server
 server_data myData;
 pthread_mutex_t myData_m;
 
@@ -29,7 +31,7 @@ int main()
   //pthread_create(&command_thread, NULL, /*tbd*/, NULL);
   //pthread_create(&sensor_control_thread, NULL, /*tbd*/, NULL);
   pthread_create(&net_thread, NULL, serverPostLoop, NULL);
-  //
+ 
   //jump out
   pthread_exit(NULL);
 }

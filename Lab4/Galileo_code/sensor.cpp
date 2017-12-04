@@ -1,15 +1,30 @@
-#include "camera.h"
+#include "sensor.h"
 
 #include "opencv2/opencv.hpp"
+#include "mraa.hpp"
 
-using namespace cv;
 using namespace std;
+
+//sensor access functions
+bool capture_and_save_image(char* filename);
+double get_temp(); // temperature in C
+
+void* sensorLoop(void * x)
+{
+  //todo main logic of sensor Loop
+}
+
+
+
+//sensor access
 
 //read image from filename
 //if successful, save as a file -- .png and retrun true
 //if not, return false.
 bool capture_and_save_image(char* filename)
 {
+  using namespace cv;
+
   //init webcam on video0 interface
   VideoCapture ourCam;
   ourCam.open(0);
@@ -46,4 +61,19 @@ bool capture_and_save_image(char* filename)
   }
 
   return true;
+}
+
+//Ask the temp sensor to give you the temp in C
+double get_temp()
+{
+  using namespace mraa; 
+  I2c i2c(0);
+  i2c.address(TMP102Address);
+
+  uint8_t dataReg [2];
+
+  int buffer = i2c.read(dataReg,2); // read two bytes from the registers
+  int temperature = ((dataReg[0]<<8 | dataReg[1]) >> 4);
+
+  return temperature*0.0625;
 }
