@@ -1,10 +1,14 @@
 
+#include <stdio.h>
+#include <string.h>
 #include <pthread.h>
 #include <time.h>
 #include <unistd.h>
 
-#include "net.h"
+#include <curl/curl.h>
 
+#include "common.h"
+#include "net.h"
 
 //format the data to be sent to the server into the buffer
 //length is the length of the length of the buffer
@@ -38,8 +42,7 @@ void HTTP_POST(const char* url){ //} const char* image, int size){
   {
     curl_easy_setopt(curl, CURLOPT_URL, url);
     curl_easy_setopt(curl, CURLOPT_POST, 1);
-    //curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE,(long) size);
-    //curl_easy_setopt(curl, CURLOPT_POSTFIELDS, image);
+    curl_easy_setopt(curl, CURLOPT_TIMEOUT, 20); //complete in 20 seconds or else
     
     res = curl_easy_perform(curl);
     if(res != CURLE_OK)
@@ -82,6 +85,7 @@ void* serverPostLoop(void * x)
     getPostRequest(postBuffer, MAX_POST, picAdcValue, picStatus, timeStamp, filename);
 
     //send it
+    printf("Post: %s\n\n", postBuffer);
     HTTP_POST(postBuffer);
   }
 }
