@@ -7,6 +7,7 @@
 #include "common.h"
 #include "net.h"
 #include "sensor.h"
+#include "mraa.hpp"
 //#define _CRT_SECURE_NO_WARNINGS 
 
 //hold the data to send to the server
@@ -28,12 +29,39 @@ int main()
   pthread_t net_thread;
 
   ////run threads
-  //pthread_create(&command_thread, NULL, /*tbd*/, NULL);
+  pthread_create(&command_thread, NULL,commandLoop, NULL);
   //pthread_create(&sensor_control_thread, NULL, /*tbd*/, NULL);
   pthread_create(&net_thread, NULL, serverPostLoop, NULL);
  
   //jump out
   pthread_exit(NULL);
+}
+
+void* commandLoop(void * x)
+{
+	//initialize the I2C communication with the PIC
+	using namespace mraa;
+	I2c i2c(0);
+	i2c.address(xxx/*undefined as of now*/);
+
+	char word[20];
+	int cmd;
+	unsigned int value_ADC;
+	printf("Enter the command to be used (1-4)\n");
+	scanf("%d", &cmd);
+	if (cmd == 1)
+	{
+		strcpy(word, "dingo");
+	}
+	else if (cmd == 2)
+	{
+		sensorPing();
+	}
+	else if (cmd == 3)
+	{
+		value_ADC = sendADCresults();
+
+	}
 }
 
 //returns a copy of the current state
