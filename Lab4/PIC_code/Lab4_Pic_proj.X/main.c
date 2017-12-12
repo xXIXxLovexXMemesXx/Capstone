@@ -88,15 +88,8 @@ void sensorReset()
     servoRotate0();
 }
 
-void i2cInit(void)
-{
-    //put in Slave receive mode
-        //SSPxCON1 register
-    //set address
-        //SSPxADD
-}
 
-void ADCInit(void)  {
+void ADC_Init(void)  {
     //  Configure ADC module  
     TRISA = 0b11111110;   //set PORTA to input except for pin0
     TRISAbits.TRISA1 = 1;   //set pin A1 to input
@@ -114,6 +107,58 @@ void ADCInit(void)  {
     
     printf("Initialized ADC\n");
 } 
+
+//where duty is from 0 to 100 %
+void set_pwm_duty(int duty)
+{
+    int pr;
+    //pulse width = CCPR4H:CCPR4L * 64 / FOSC
+    //duty = 0 -> PW = 1ms, PR = 15
+    //duty = 100 -> PW = 2ms, PR = 31
+    pr = 15 + duty*16/100; //turn % duty into PR setting
+    CCPR1H = 0;
+    CCPR1L = pr;
+}
+
+void everything_init()
+{
+    ////init PWM module
+    
+    //Set whole port B to output
+    TRISC = 0; 
+    
+    //set frquency of PWM
+    //PWM period = 20ms = [(PR2) + 1]] * 4* _XTAL_FREQ * TMR2 prescale
+    // PR2 = 20ms / (4 * 1/_XTAL_FREQ * 64) ~= 77
+    PR2 =  77; //set timer2 period 
+    
+    //use CCP1 because it goes to RC1
+    CCP1CON = 0x8F; //set enabled.. in PWM mode
+    
+    //load CCPRxL and CCPRxH
+    set_pwm_duty(50);
+    
+    //point timer2 at CCP1
+    CCPTMRS0 = 0x01;
+    
+    //need to set RxyPPS to let CCP1 take over C2
+    RC2PPS = 0x09;
+    
+    //configure + start TIMER2
+    T2CLKCON = 0x01; // set timer source to FOSC/4
+    T2CON = 0xE0; //set timer2 on; prescaler = 64
+     
+    //clear TMR2IF of PIR4
+    PIR4 = 0;
+    
+    T2CON |= 0x80;
+    
+    ////Init ADC
+    ADC_Init();
+}
+
+
+
 
 void sensorPing()
 {
@@ -143,26 +188,27 @@ void sendADCResults()
     
 }
 
-void initModules(void)
-{
-    ADCInit();
-    i2cInit();
-}
-
 // Main program
 void main (void)
 {
+    unsigned i;
     SYSTEM_Initialize();
     unsigned results;
     
     unsigned char msg; 
+    TRISA = 0;
     TRISB = 0;
-    initModules();
+    everything_init();
     printf("Starting main\n");
     
     while(1)
     {  
-        //wait for ADC interrupts
+        PORTA = 0;
+        set_pwm_duty(++i % 101);
+        __delay_ms(50);
+        PORTA = 1;
+        __delay_ms(50);
+        set_pwm_duty(++i % 101);
     } 
 }
 
