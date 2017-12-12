@@ -82,7 +82,8 @@ char* fileHandleGPIO_6;
 char* fileHandleGPIO_7;
 char* fileHandleGPIO_S;
 
-
+//variable for scan mode
+int scan_solo;
 
 
 int main()
@@ -171,15 +172,27 @@ void commandloop()
 			break;
 		case 7:
 			rotate_servo_90_e();
+			pthread_mutex_lock(&myData_m);
+			scan_solo = 1;
+			pthread_mutex_unlock(&myData_m);
 			break;
 		case 8:
 			rotate_servo_180_e();
+			pthread_mutex_lock(&myData_m);
+			scan_solo = 1;
+			pthread_mutex_unlock(&myData_m);
 			break;
 		case 9:
 			rotate_servo_90_d;
+			pthread_mutex_lock(&myData_m);
+			scan_solo = 0;
+			pthread_mutex_unlock(&myData_m);
 			break;
 		case 10:
 			rotate_servo_180_d;
+			pthread_mutex_lock(&myData_m);
+			scan_solo = 0;
+			pthread_mutex_unlock(&myData_m);
 			break;
 		default:
 			printf("Please enter a valid number (1 - 10)\n");
@@ -206,11 +219,35 @@ void sensor_control()
 {
 	while (1)
 	{
+		time_t date = time(NULL);
+		char* cdate;
 		pthread_mutex_lock(&mydata_m);
 		LDR_Value = adc_value();
 		cur_temp = get_temp();
+		if((cur_temp > temperature_threshold) && (scan_solo == 1)
+		{
+			date = time(NULL);
+			cdate = asctime(localtime(&date));
+			for(int i = 0; i < 25; i++)
+			{
+				if (cdate[i] == 32)
+					{
+						cdate[i] = '_';
+					}
+					else if (cdate[i] == 58)
+					{
+						cdate[i] = '_';
+					}
+					else if (cdate[i] == 10)
+					{
+						cdate[i] = '_';
+					}
+			}
+			printf("Taking picture: %s \n", cdate);
+			capture_and_save_image(cdate);
+		}	
 		pthread_mutex_unlock(&mydata_m);
-
+		sleep(2)
 
 
 	}
