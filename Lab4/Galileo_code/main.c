@@ -8,6 +8,8 @@
 #include "net.h"
 #include "sensor.h"
 #include "mraa.hpp"
+#include "camera.h"
+#include "camera.cpp"
 #include <assert.h>
 #include <stdlib.h>
 #include <fcntl.h>
@@ -70,6 +72,8 @@ void rotate_servo_90_E();
 void rotate_servo_180_E();
 void rotate_servo_90_D();
 void rotate_servo_180_D();
+void commandloop();
+void sensor_control();
 
 //File handles for the pins
 char* fileHandleGPIO_4;
@@ -97,13 +101,120 @@ int main()
 
   ////run threads
   pthread_create(&command_thread, NULL,commandLoop, NULL);
-  //pthread_create(&sensor_control_thread, NULL, /*tbd*/, NULL);
+  pthread_create(&sensor_control_thread, NULL, sensor_control, NULL);
   pthread_create(&net_thread, NULL, serverPostLoop, NULL);
  
   //jump out
   pthread_exit(NULL);
 }
 
+
+
+void commandloop()
+{
+
+	fileHandleGPIO_4 = openGPIO(GP_4, GPIO_DIRECTION_OUT);
+	fileHandleGPIO_5 = openGPIO(GP_5, GPIO_DIRECTION_OUT);
+	fileHandleGPIO_6 = openGPIO(GP_6, GPIO_DIRECTION_OUT);
+	fileHandleGPIO_7 = openGPIO(GP_7, GPIO_DIRECTION_OUT);
+	fileHandleGPIO_S = openGPIO(Strobe, GPIO_DIRECTION_OUT);
+
+	int input;
+	int temp_thresh_input;
+	int scanf_test;
+	double temp;
+
+	do {
+
+		printf("Select a number for desired action: \n\n");
+		printf("1. Reset\n");
+		printf("2. Ping\n");
+		printf("3. Get ADC value\n");
+		printf("4. Turn Servo 30 degrees\n");
+		printf("5. Turn Servo 90 degrees\n");
+		printf("6. Turn Servo 120 degrees\n");
+		printf("7. Rotate the Servo continuously 90 degrees enable\n");
+		printf("8. Rotate the Servo continously 180 degrees enable\n");
+		printf("9. Rotate the Servo continuously 90 degrees disable\n");
+		printf("10. Rotate the Servo continuously 180 degrees disable\n");
+		printf("11. Exit\n");
+		temp = get_temp();
+		printf("Current Temperature: %lf", temp);
+		//check for input. 
+		input = 0;
+		scanf_test = scanf("%d", &input);
+		//If ipmroperly formatted,
+		//  set input to 0 to prompt user to input again
+		if (scanf_test == 0)
+			input = 0;
+		switch (input)
+		{
+		case 1:
+			reset();
+			break;
+		case 2:
+			ping();
+			break;
+		case 3:
+			pthread_mutex_lock(&myData_m);
+			printf("LDR Value = %d", LDR_Value);
+			pthread_mutex_unlock(&myData_m);
+			break;
+		case 4:
+			servo_30();
+			break;
+		case 5:
+			servo_90();
+			break;
+		case 6:
+			servo_120();
+			break;
+		case 7:
+			rotate_servo_90_e();
+			break;
+		case 8:
+			rotate_servo_180_e();
+			break;
+		case 9:
+			rotate_servo_90_d;
+			break;
+		case 10:
+			rotate_servo_180_d;
+			break;
+		default:
+			printf("Please enter a valid number (1 - 10)\n");
+			break;
+		}
+		//print the current temperature reading
+		pthread_mutex_lock(&myData_m);
+		printf("Current Temperature reading: %lf", cur_temp);
+		pthread_mutex_unlock(&myData_m);
+		//ask the user to change the temp threshold
+		printf("Would you like to change the Temperature Threshold?\n (1 = yes)\n");
+		scanf(" %d", &temp_thresh_input);
+		if (temp_thresh_input == 1)
+		{
+			pthread_mutex_lock(&myData_m);
+			printf("Enter the new Temperature Threshold:\n");
+			scanf("%lf", &temperature_threshold);
+			pthread_mutex_unlock(&myData_m);
+		}
+	} while (input != 11);
+}
+
+void sensor_control()
+{
+	while (1)
+	{
+		pthread_mutex_lock(&mydata_m);
+		LDR_Value = adc_value();
+		cur_temp = get_temp();
+		pthread_mutex_unlock(&mydata_m);
+
+
+
+	}
+}
 
 //returns a copy of the current state
 server_data getCurrentState()
@@ -463,92 +574,6 @@ void testGPIOReadNibble(char* strobe_fh,
 }
 
 
-void commandloop(void)
-{
-
-	fileHandleGPIO_4 = openGPIO(GP_4, GPIO_DIRECTION_OUT);
-	fileHandleGPIO_5 = openGPIO(GP_5, GPIO_DIRECTION_OUT);
-	fileHandleGPIO_6 = openGPIO(GP_6, GPIO_DIRECTION_OUT);
-	fileHandleGPIO_7 = openGPIO(GP_7, GPIO_DIRECTION_OUT);
-	fileHandleGPIO_S = openGPIO(Strobe, GPIO_DIRECTION_OUT);
-
-	int input;
-	int temp_thresh_input;
-	int scanf_test;
-	double temp;
-
-	do {
-
-		printf("Select a number for desired action: \n\n");
-		printf("1. Reset\n");
-		printf("2. Ping\n");
-		printf("3. Get ADC value\n");
-		printf("4. Turn Servo 30 degrees\n");
-		printf("5. Turn Servo 90 degrees\n");
-		printf("6. Turn Servo 120 degrees\n");
-		printf("7. Rotate the Servo continuously 90 degrees enable\n");
-		printf("8. Rotate the Servo continously 180 degrees enable\n");
-		printf("9. Rotate the Servo continuously 90 degrees disable\n");
-		printf("10. Rotate the Servo continuously 180 degrees disable\n");
-		printf("11. Exit\n");
-		temp = get_temp();
-		printf("Current Temperature: %lf", temp);
-		//check for input. 
-		input = 0;
-		scanf_test = scanf("%d", &input);
-		//If ipmroperly formatted,
-		//  set input to 0 to prompt user to input again
-		if (scanf_test == 0)
-			input = 0;
-		switch (input)
-		{
-		case 1:
-			reset();
-			break;
-		case 2:
-			ping();
-			break;
-		case 3:
-			adc_value();
-			break;
-		case 4:
-			servo_30();
-			break;
-		case 5:
-			servo_90();
-			break;
-		case 6:
-			servo_120();
-			break;
-		case 7: 
-			rotate_servo_90_e();
-			break;
-		case 8:
-			rotate_servo_180_e();
-			break;
-		case 9:
-			rotate_servo_90_d;
-			break;
-		case 10:
-			rotate_servo_180_d;
-			break;
-		default:
-			printf("Please enter a valid number (1 - 10)\n");
-			break;
-		}
-
-		printf("Would you like to change the Temperature Threshold?\n (1 = yes)\n");
-		scanf(" %d", &temp_thresh_input);
-		if (temp_thresh_input == 1)
-		{
-			pthread_mutex_lock(&myData_m);
-			printf("Enter the new Temperature Threshold:\n");
-			scanf("%lf", &temperature_threshold);
-			pthread_mutex_unlock(&myData_m);
-		}
-	} while (input != 11);
-}
-
 
 //stubs for the command functions
 void reset()
@@ -602,7 +627,7 @@ void ping()
 }
 
 //requests the PIC to send its current adc value MSN (most significant nibble) first
-void adc_value()
+int adc_value()
 {
 	int i;
 	int receive_msg = 0;
@@ -642,6 +667,7 @@ void adc_value()
 		usleep(STROBE_DELAY);
 	}
 	printf("adc message received successfully: 0x%x\n", adc_value);
+	return adc_value;
 }
 
 void servo_30()

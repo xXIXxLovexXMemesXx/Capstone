@@ -15,6 +15,8 @@
 using namespace mraa;
 
 double temperature_threshold = 30;
+int LDR_Value
+double cur_temp;
 double get_temp(); // temperature in C
 
 double get_temp() {
