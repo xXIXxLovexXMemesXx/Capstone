@@ -9,9 +9,10 @@
 #define MSG_TURN30      0x3
 #define MSG_TURN90      0x4
 #define MSG_TURN120     0x5
-#define MSG_SCAN_ON     0x6
-#define MSG_SCAN_90     0x7
-#define MSG_SCAN_180    0x8
+#define MSG_ROTATE90_E  0x6
+#define MSG_ROTATE180_E 0x7
+#define MSG_ROTATE90_D  0x8
+#define MSG_ROTATE180_D 0x9
 
 #define MSG_ACK         0xE
 #define MSG_NOTHING     0xF
@@ -29,12 +30,15 @@
 
 ////Global state variables.
 //1 if in scan mode. 0 if not
-int is_scanning;
+int isScanning;
 
 int scanCounter; //current duty cycle in the scan
 int isScanningUp; //direction of scanCounter increment. 0 = down, 1 = up
 int scanUpperLimit; //upper % scan will go to
 int scanLowerLimit; //lower % scan limit
+
+//fwd declare tests
+void test_main();
 
 void adc_init(void)  {
     //  Configure ADC module  
@@ -151,7 +155,7 @@ void sensor_reset()
     
     //action here
     set_pwm_duty(50);
-    is_scanning = 0;
+    isScanning = 0;
     scanCounter = 50;
     scanUpperLimit = 75;
     scanLowerLimit = 25;
@@ -225,7 +229,7 @@ void turn_30()
     
     //action here
     set_pwm_duty(75);
-    is_scanning = 0;
+    isScanning = 0;
     //
     
    //send the ACK message to the galileo
@@ -244,7 +248,7 @@ void turn_90()
     
     //action here
     set_pwm_duty(100);
-    is_scanning = 0;
+    isScanning = 0;
     //
     
    //send the ACK message to the galileo
@@ -263,7 +267,7 @@ void turn_120()
     
     //action here
     set_pwm_duty(0);
-    is_scanning = 0;
+    isScanning = 0;
     //
     
    //send the ACK message to the galileo
@@ -281,7 +285,7 @@ void enter_scan_mode()
     wait_while_strobe(1);
     
     //action here
-    is_scanning = 1;
+    isScanning = 1;
     //
     
    //send the ACK message to the galileo
@@ -292,12 +296,13 @@ void enter_scan_mode()
     wait_while_strobe(0);
 }
 
-void set_scan_90()
+void rotate_90_enable()
 {
     printf("set scanning to 90degrees\n");
     wait_while_strobe(1);
     
     //action here
+    isScanning = 1;
     scanUpperLimit = 75;
     scanLowerLimit = 25;
     //
@@ -310,14 +315,32 @@ void set_scan_90()
     wait_while_strobe(0);
 }
 
-void set_scan_180()
+void rotate_180_enable()
 {
     printf("set scanning to 18 0degrees\n");
     wait_while_strobe(1);
     
     //action here
+    isScanning = 1;
     scanUpperLimit = 100;
     scanLowerLimit = 0;
+    //
+    
+   //send the ACK message to the galileo
+    send_nibble(MSG_ACK);
+    
+    wait_while_strobe(0);
+    wait_while_strobe(1);
+    wait_while_strobe(0);
+}
+
+void disable_rotate()
+{
+    printf("set scanning to 18 0degrees\n");
+    wait_while_strobe(1);
+    
+    //action here
+    isScanning = 0;
     //
     
    //send the ACK message to the galileo
@@ -384,7 +407,6 @@ void handle_scan()
     }
 }
 
-void test_main();
 // Main program
 void main (void)
 {
@@ -395,7 +417,7 @@ void main (void)
     //init state
     unsigned char msg = MSG_NOTHING;
     set_pwm_duty(50);
-    is_scanning = 0;
+    isScanning = 0;
     scanCounter = 50;
     scanUpperLimit = 75;
     scanLowerLimit = 25;
@@ -405,7 +427,7 @@ void main (void)
     while(1)
     {  
         //handle Scanning
-        if(is_scanning)
+        if(isScanning)
         {
             PORTAbits.RA0 = 1;//light on if scanning
             handle_scan();
@@ -417,6 +439,7 @@ void main (void)
         
         //receive a message and do something about it
         msg = receive_msg();
+        
         if(msg == MSG_RESET) {
             sensor_reset();
         } else if(msg == MSG_PING) {
@@ -429,15 +452,18 @@ void main (void)
             turn_90();
         } else if(msg == MSG_TURN120) {
             turn_120();
-        } else if(msg == MSG_SCAN_ON) {
-            enter_scan_mode();
-        } else if(msg == MSG_SCAN_90) {
-            set_scan_90();
-        } else if(msg == MSG_SCAN_180) {
-            set_scan_180();
+        } else if(msg == MSG_ROTATE90_E) {
+            rotate_90_enable();
+        } else if(msg == MSG_ROTATE180_E) {
+            rotate_180_enable();
+        } else if(msg == MSG_ROTATE90_D) {
+            disable_rotate();
+        } else if(msg == MSG_ROTATE180_D) {
+            disable_rotate();
         } else {
             //do nothing;
         }
+        
     } // end inf loop
 }
 
@@ -446,7 +472,7 @@ void test_scan()
     //init state
     unsigned char msg = MSG_NOTHING;
     set_pwm_duty(50);
-    is_scanning = 0;
+    isScanning = 0;
     scanCounter = 50;
     scanUpperLimit = 75;
     scanLowerLimit = 25;
