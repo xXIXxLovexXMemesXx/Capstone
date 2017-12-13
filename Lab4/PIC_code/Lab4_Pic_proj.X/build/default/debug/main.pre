@@ -17422,179 +17422,22 @@ void SYSTEM_Initialize(void);
 # 80
 void OSCILLATOR_Initialize(void);
 
-# 24 "main.c"
-void servoRotate0()
-{
-unsigned int i;
-for(i=0;i<50;i++)
-{
-PORTB = 1;
-_delay((unsigned long)((1.5)*(1000000/4000.0)));
-PORTB = 0;
-_delay((unsigned long)((18.5)*(1000000/4000.0)));
-}
-}
+# 33 "main.c"
+int isScanning;
 
-void servoRotate30()
-{
-printf("Delay me just a little bit\n");
-while(PORTCbits.RC6 == 1)
-{
+int scanCounter;
+int isScanningUp;
+int scanUpperLimit;
+int scanLowerLimit;
 
-}
-unsigned int i;
-TRISC = 0b01000000;
 
-PORTCbits.RC2 = 0;
-PORTCbits.RC1 = 1;
-PORTCbits.RC7 = 1;
-PORTCbits.RC5 = 1;
-for(i=0;i<50;i++)
-{
-PORTB = 1;
-_delay((unsigned long)((1.67)*(1000000/4000.0)));
-PORTB = 0;
-_delay((unsigned long)((18.33)*(1000000/4000.0)));
-}
-}
+void test_main();
 
-void servoRotate90()
-{
-printf("REEEEEEEEEEEEEEEEEEEEEEE\n");
-while(PORTCbits.RC6 == 1)
-{
+void adc_init(void) {
 
-}
-unsigned int i;
-TRISC = 0b01000000;
+TRISA = 0;
+ANSELA = 0;
 
-PORTCbits.RC2 = 0;
-PORTCbits.RC1 = 1;
-PORTCbits.RC7 = 1;
-PORTCbits.RC5 = 1;
-for(i=0;i<50;i++)
-{
-PORTB = 1;
-_delay((unsigned long)((2)*(1000000/4000.0)));
-PORTB = 0;
-_delay((unsigned long)((18)*(1000000/4000.0)));
-}
-}
-
-void servoRotate120()
-{
-printf("Delay me just a little bit\n");
-while(PORTCbits.RC6 == 1)
-{
-
-}
-unsigned int i;
-TRISC = 0b01000000;
-
-PORTCbits.RC2 = 0;
-PORTCbits.RC1 = 1;
-PORTCbits.RC7 = 1;
-PORTCbits.RC5 = 1;
-for(i=0;i<50;i++)
-{
-PORTB = 1;
-_delay((unsigned long)((1.33)*(1000000/4000.0)));
-PORTB = 0;
-_delay((unsigned long)((18.67)*(1000000/4000.0)));
-}
-
-}
-
-void set_receive()
-{
-
-# 112
-ANSELC = 0;
-PORTC = 0;
-TRISC = 0b11101100;
-}
-
-unsigned char receive_msg()
-{
-set_receive();
-unsigned char results;
-while(PORTCbits.RC6 == 1)
-{
-
-}
-
-while(PORTCbits.RC6 == 0)
-{
-if(PORTCbits.RC5 == 0 &&
-PORTCbits.RC7 == 0 &&
-PORTCbits.RC1 == 0 &&
-PORTCbits.RC2 == 0)
-{
-results = 0x0;
-}
-else if(PORTCbits.RC5 == 0 &&
-PORTCbits.RC7 == 0 &&
-PORTCbits.RC1 == 0 &&
-PORTCbits.RC2 == 1)
-{
-results = 0x1;
-}
-else if(PORTCbits.RC5 == 0 &&
-PORTCbits.RC7 == 0 &&
-PORTCbits.RC1 == 1 &&
-PORTCbits.RC2 == 0)
-{
-results = 0x2;
-}
-else if(PORTCbits.RC5 == 0 &&
-PORTCbits.RC7 == 0 &&
-PORTCbits.RC1 == 1 &&
-PORTCbits.RC2 == 1)
-{
-results = 0x3;
-}
-else if(PORTCbits.RC5 == 0 &&
-PORTCbits.RC7 == 1 &&
-PORTCbits.RC1 == 0 &&
-PORTCbits.RC2 == 0)
-{
-results = 0x4;
-}
-else if(PORTCbits.RC5 == 0 &&
-PORTCbits.RC7 == 1 &&
-PORTCbits.RC1 == 0 &&
-PORTCbits.RC2 == 1)
-{
-results = 0x5;
-}
-else
-return results = 0xF;
-}
-return results;
-
-# 181
-}
-
-void sensorReset()
-{
-printf("REEEEEEEEEEE");
-while(PORTCbits.RC6 == 1)
-{
-
-}
-TRISC = 0b01000000;
-
-PORTCbits.RC2 = 0;
-PORTCbits.RC1 = 1;
-PORTCbits.RC7 = 1;
-PORTCbits.RC5 = 1;
-
-servoRotate0();
-}
-void ADC_Init(void) {
-
-# 216
-TRISA = 0b11111110;
 TRISAbits.TRISA1 = 1;
 ANSELAbits.ANSA1 = 1;
 ADCON1 = 0;
@@ -17608,149 +17451,446 @@ ADCON0 = 0b10000100;
 ADREF = 0;
 ADPCH = 0b00000001;
 
-TX1STA = 0b00100000;
-RC1STA = 0b10000000;
 printf("Initialized ADC\n");
 }
 
-unsigned int ADC_conversion_results() {
-ADPCH = 1;
 
-ADCON0 |= 1;
+void set_pwm_duty(unsigned duty)
+{
+unsigned pr;
 
-while(ADCON0 & 1);
-unsigned result = (unsigned)((ADRESH << 8) + ADRESL);
-return result;
+
+
+pr = 15 + duty*16/100;
+CCPR1H = 0;
+CCPR1L = pr;
 }
 
-void sensorPing()
+
+void everything_init()
+{
+
+
+TRISC = 0;
+ANSELC = 0;
+
+
+
+
+PR2 = 77;
+
+
+CCP1CON = 0x8F;
+
+
+set_pwm_duty(50);
+
+
+CCPTMRS0 = 0x01;
+
+# 102
+T2CLKCON = 0x01;
+T2CON = 0xE0;
+
+
+PIR4 = 0;
+
+T2CON |= 0x80;
+
+
+T0CON0 = 0x90;
+T0CON1 = 0x41;
+T0CON0 |= 0x80;
+
+
+TRISA = 0;
+
+
+adc_init();
+}
+
+
+
+void wait_while_strobe(int state)
+{
+while(PORTCbits.RC6 == state)
+{
+(void) 0;
+}
+}
+
+
+
+void send_nibble(unsigned char nibble)
+{
+TRISC = 0b01000000;
+PORTCbits.RC2 = (nibble) & 1;
+PORTCbits.RC1 = (nibble >> 1) & 1 ;
+PORTCbits.RC7 = (nibble >> 2) & 1 ;
+PORTCbits.RC5 = (nibble >> 3) & 1;
+}
+
+
+void sensor_ping()
 {
 printf("PING\n");
-PORTA ^= 1;
-while(PORTCbits.RC6 == 1)
-{
+wait_while_strobe(1);
 
-}
-TRISC = 0b01000000;
 
-PORTCbits.RC2 = 0;
-PORTCbits.RC1 = 1;
-PORTCbits.RC7 = 1;
-PORTCbits.RC5 = 1;
+send_nibble(0xE);
 
+wait_while_strobe(0);
+wait_while_strobe(1);
+wait_while_strobe(0);
+printf("Success\n");
 }
 
-void sendADCResults()
+
+void sensor_reset()
 {
-printf(";)\n");
+printf("REEEEEEEEEEEEEEEEEEEEEEEset\n");
+wait_while_strobe(1);
+
+
+set_pwm_duty(50);
+isScanning = 0;
+scanCounter = 50;
+scanUpperLimit = 75;
+scanLowerLimit = 25;
+
+
+
+send_nibble(0xE);
+
+wait_while_strobe(0);
+wait_while_strobe(1);
+wait_while_strobe(0);
+}
+
+
+void send_adc_results()
+{
+printf("Sending ADC results \n");
 unsigned results;
 unsigned char nib1, nib2, nib3;
 
-results = ADC_conversion_results();
+
+ADPCH = 1;
+ADCON0 |= 1;
+while(ADCON0 & 1);
+results = (unsigned) ((ADRESH << 8) + ADRESL);
+
 nib1 = (results & 0x300) >> 8;
 nib2 = (results & 0x0F0) >> 4;
 nib3 = (results & 0x00F);
 
+wait_while_strobe(1);
+
+send_nibble(nib1);
+
+wait_while_strobe(0);
+wait_while_strobe(1);
+wait_while_strobe(0);
+
+wait_while_strobe(1);
+
+send_nibble(nib2);
+
+wait_while_strobe(0);
+wait_while_strobe(1);
+wait_while_strobe(0);
+
+wait_while_strobe(1);
+
+send_nibble(nib3);
+
+wait_while_strobe(0);
+wait_while_strobe(1);
+wait_while_strobe(0);
+
+wait_while_strobe(1);
+
+send_nibble(0xE);
+
+wait_while_strobe(0);
+wait_while_strobe(1);
+wait_while_strobe(0);
+}
+
+
+void turn_30()
+{
+printf("turn 30\n");
+wait_while_strobe(1);
+
+
+set_pwm_duty(75);
+isScanning = 0;
+
+
+
+send_nibble(0xE);
+
+wait_while_strobe(0);
+wait_while_strobe(1);
+wait_while_strobe(0);
+}
+
+
+void turn_90()
+{
+printf("servo 90\n");
+wait_while_strobe(1);
+
+
+set_pwm_duty(100);
+isScanning = 0;
+
+
+
+send_nibble(0xE);
+
+wait_while_strobe(0);
+wait_while_strobe(1);
+wait_while_strobe(0);
+}
+
+
+void turn_120()
+{
+printf("scan 120\n");
+wait_while_strobe(1);
+
+
+set_pwm_duty(0);
+isScanning = 0;
+
+
+
+send_nibble(0xE);
+
+wait_while_strobe(0);
+wait_while_strobe(1);
+wait_while_strobe(0);
+}
+
+
+void enter_scan_mode()
+{
+printf("enter scan\n");
+wait_while_strobe(1);
+
+
+isScanning = 1;
+
+
+
+send_nibble(0xE);
+
+wait_while_strobe(0);
+wait_while_strobe(1);
+wait_while_strobe(0);
+}
+
+void rotate_90_enable()
+{
+printf("set scanning to 90degrees\n");
+wait_while_strobe(1);
+
+
+isScanning = 1;
+scanUpperLimit = 75;
+scanLowerLimit = 25;
+
+
+
+send_nibble(0xE);
+
+wait_while_strobe(0);
+wait_while_strobe(1);
+wait_while_strobe(0);
+}
+
+void rotate_180_enable()
+{
+printf("set scanning to 18 0degrees\n");
+wait_while_strobe(1);
+
+
+isScanning = 1;
+scanUpperLimit = 100;
+scanLowerLimit = 0;
+
+
+
+send_nibble(0xE);
+
+wait_while_strobe(0);
+wait_while_strobe(1);
+wait_while_strobe(0);
+}
+
+void disable_rotate()
+{
+printf("set scanning to 18 0degrees\n");
+wait_while_strobe(1);
+
+
+isScanning = 0;
+
+
+
+send_nibble(0xE);
+
+wait_while_strobe(0);
+wait_while_strobe(1);
+wait_while_strobe(0);
+}
+
+
+unsigned char return_bus_nibble()
+{
+return (PORTCbits.RC5 << 3) +
+(PORTCbits.RC7 << 2) +
+(PORTCbits.RC1 << 1) +
+PORTCbits.RC2;
+}
+
+unsigned char receive_msg()
+{
+unsigned results;
+
+# 380
+TRISC = 0b11100110;
+
+wait_while_strobe(1);
+wait_while_strobe(0);
 
 while(PORTCbits.RC6 == 1)
 {
+results = return_bus_nibble();
+}
 
+wait_while_strobe(0);
+
+
+return results;
 }
 
 
-
-PORTCbits.RC2 = (nib1 & 0x1);
-PORTCbits.RC1 = (nib1 & 0x2) >>1;
-PORTCbits.RC7 = 0;
-PORTCbits.RC5 = 0;
-
-
-while(PORTCbits.RC6 == 0)
+void handle_scan()
 {
 
-}
-
-
-while(PORTCbits.RC6 == 1)
+if(PIR0bits.TMR0IF)
 {
+PIR0bits.TMR0IF = 0;
 
+
+if(isScanningUp)
+++scanCounter;
+else
+--scanCounter;
+
+
+set_pwm_duty(scanCounter);
+
+
+if(scanCounter >= scanUpperLimit)
+isScanningUp = 0;
+else if(scanCounter <= scanLowerLimit)
+isScanningUp = 1;
 }
-
-PORTCbits.RC2 = (nib2 & 0x1);
-PORTCbits.RC1 = (nib2 & 0x2) >>1;
-PORTCbits.RC7 = (nib2 & 0x4) >> 2;
-PORTCbits.RC5 = (nib2 & 0x8) >> 3;
-
-
-while(PORTCbits.RC6 == 0)
-{
-
 }
-
-
-while(PORTCbits.RC6 == 1)
-{
-
-}
-
-PORTCbits.RC2 = (nib3 & 0x1);
-PORTCbits.RC1 = (nib3 & 0x2) >>1;
-PORTCbits.RC7 = (nib3 & 0x4) >> 2;
-PORTCbits.RC5 = (nib3 & 0x8) >> 3;
-
-
-while(PORTCbits.RC6 == 0)
-{
-
-}
-
-
-while(PORTCbits.RC6 == 1)
-{
-
-}
-PORTCbits.RC2 = 0;
-PORTCbits.RC1 = 1;
-PORTCbits.RC7 = 1;
-PORTCbits.RC5 = 1;
-}
-
 
 
 void main (void)
 {
-SYSTEM_Initialize();
-unsigned results;
 
-unsigned char msg;
-TRISB = 0;
-ADC_Init();
-printf("Starting main\n");
-TRISAbits.TRISA0 = 0;
+SYSTEM_Initialize();
+everything_init();
+
+
+unsigned char msg = 0xF;
+set_pwm_duty(50);
+isScanning = 0;
+scanCounter = 50;
+scanUpperLimit = 75;
+scanLowerLimit = 25;
+
+
+
+
+PORTAbits.RA0 = 1;
+_delay((unsigned long)((1000)*(1000000/4000.0)));
+PORTAbits.RA0 = 0;
 while(1)
 {
-results = ADC_conversion_results();
-if(results > 0x0380)
-PORTA |= 0x01;
-else
-PORTA &= !0x01;
-msg=receive_msg();
-if(msg == 0x0)
-sensorReset();
-else if (msg == 0x1)
-sensorPing();
-else if (msg == 0x2)
+
+if(isScanning)
 {
-sendADCResults();
+PORTAbits.RA0 = 1;
+handle_scan();
 }
-else if (msg == 0x3)
-servoRotate30();
-else if (msg == 0x4)
-servoRotate90();
-else if (msg == 0x5)
-servoRotate120();
 else
-(void) 0;
+{
+PORTAbits.RA0 = 0;
+}
+
+
+msg = receive_msg();
+
+if(msg == 0x0) {
+sensor_reset();
+} else if(msg == 0x1) {
+sensor_ping();
+} else if(msg == 0x2) {
+send_adc_results();
+} else if(msg == 0x3) {
+turn_30();
+} else if(msg == 0x4) {
+turn_90();
+} else if(msg == 0x5) {
+turn_120();
+} else if(msg == 0x6) {
+rotate_90_enable();
+} else if(msg == 0x7) {
+rotate_180_enable();
+} else if(msg == 0x8) {
+disable_rotate();
+} else if(msg == 0x9) {
+disable_rotate();
+} else {
+
+}
+
+}
+}
+
+void test_scan()
+{
+
+unsigned char msg = 0xF;
+set_pwm_duty(50);
+isScanning = 0;
+scanCounter = 50;
+scanUpperLimit = 75;
+scanLowerLimit = 25;
+
+int oldScanCounter = 50;
+
+while(1)
+{
+oldScanCounter = scanCounter;
+handle_scan();
+
+
+if(scanCounter != oldScanCounter)
+{
+PORTAbits.RA0 = 1;
+_delay((unsigned long)((200)*(1000000/4000.0)));
+} else {
+PORTAbits.RA0 = 0;
+}
 }
 }
 
