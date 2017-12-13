@@ -15,7 +15,7 @@
 
 #define TMP102Address 0x48
 
-//structure to hold data that is shared between threads
+//structure to hold data that is going to the server
 typedef struct {
   bool picOnline; //true if pic is online
   unsigned int adcData; //value of PIC adc

@@ -1,4 +1,5 @@
 #include "sensor.h"
+#include "common.h"
 
 #include "opencv2/opencv.hpp"
 #include "mraa.hpp"
@@ -55,13 +56,24 @@ bool capture_and_save_image(char* filename)
 double get_temp()
 {
   using namespace mraa; 
-  I2c i2c(0);
-  i2c.address(TMP102Address);
+  int temperature;
 
-  uint8_t dataReg [2];
+  //printf("About to probe I2C temp sensor\n");
 
-  int buffer = i2c.read(dataReg,2); // read two bytes from the registers
-  int temperature = ((dataReg[0]<<8 | dataReg[1]) >> 4);
+  try{
+    I2c i2c(0);
+    i2c.address(TMP102Address);
 
-  return temperature*0.0625;
+    uint8_t dataReg [2];
+
+    int buffer = i2c.read(dataReg,2); // read two bytes from the registers
+    temperature = ((dataReg[0]<<8 | dataReg[1]) >> 4);
+  } 
+  catch(const std::invalid_argument& e) //catch an error from no device on bus
+  {
+    temperature = -10000;
+    printf("Temp sensor read error. Sensor not connected\n");
+  }
+
+  return ((double)temperature)*0.0625;
 }

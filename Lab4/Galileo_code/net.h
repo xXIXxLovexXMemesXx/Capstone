@@ -11,7 +11,7 @@
 #define PIC_ERROR "Error"
 
 //server address information
-#define SERVER_HOSTNAME "ec2-54-202-113-131.us-west-2.compute.amazonaws.com"
+#define SERVER_HOSTNAME  "10.253.76.55"//"ec2-54-202-113-131.us-west-2.compute.amazonaws.com"
 #define SERVER_PORTNUMBER 8000
 
 //buffer lengths

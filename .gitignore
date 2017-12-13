@@ -11,3 +11,6 @@
 #Don't track executables or zipped submission archives
 *.exe
 *.zip
+
+#don't track the test server
+testServer/*

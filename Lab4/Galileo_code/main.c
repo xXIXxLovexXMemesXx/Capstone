@@ -55,18 +55,15 @@
 #define _CRT_SECURE_NO_WARNINGS 
 
 //hold the data to send to the server
+//protect all data with myData_m
 server_data myData;
 pthread_mutex_t myData_m;
-const int addr = 0x32;
-
-//keep track of sensor data
 double temperature_threshold = 30;
-int LDR_Value;
-double cur_temp;
+double cur_temp = -100; //set to invalid value
 
 //Functions definitions - for commands
 void reset();
-void ping();
+int ping(unsigned timeout);
 int adc_value();
 void servo_30();
 void servo_90();
@@ -98,6 +95,27 @@ pthread_mutex_t gpio_m;
 //variable for scan mode
 int scan_solo;
 
+//tests
+//pass
+void testMyBus()
+{
+	int input = 0;
+	int scanf_test = 0;
+	while(input != 1)
+	{
+		printf("Ping? or not. 1 = quit\n");
+		input = 0;
+		scanf_test = scanf("%d", &input);
+
+		if (scanf_test == 0)
+			input = 0;
+
+		if(input == 1)
+			return;
+		int i = ping(100);
+		printf("Ping return: %x\n", i);
+	}
+}
 
 int main()
 {
@@ -117,6 +135,9 @@ int main()
 	fileHandleGPIO_7 = openGPIO(GP_7, GPIO_DIRECTION_OUT);
 	fileHandleGPIO_S = openGPIO(Strobe, GPIO_DIRECTION_OUT);
 
+	//test
+	//testMyBus();
+
   ////create threads
   pthread_t command_thread;
   pthread_t sensor_control_thread;
@@ -127,7 +148,11 @@ int main()
   pthread_create(&sensor_control_thread, NULL, sensor_control, NULL);
   pthread_create(&net_thread, NULL, serverPostLoop, NULL);
  
-  //jump out
+
+  pthread_join(command_thread, NULL);
+
+  //jump out if the command loop exits
+  printf("Main thread stopped\n");
   pthread_exit(NULL);
 }
 
@@ -139,10 +164,11 @@ void* commandLoop(void*)
 	int temp_thresh_input;
 	int scanf_test;
 	double temp;
+	int ping_ret; //return value of ping function
 
 	do {
-
-		printf("Select a number for desired action: \n\n");
+		//print the main menu
+		printf("(1)Select a number for desired action: \n\n");
 		printf("1. Reset\n");
 		printf("2. Ping\n");
 		printf("3. Get ADC value\n");
@@ -154,11 +180,17 @@ void* commandLoop(void*)
 		printf("9. Rotate the Servo continuously 90 degrees disable\n");
 		printf("10. Rotate the Servo continuously 180 degrees disable\n");
 		printf("11. Exit\n");
-		temp = get_temp();
-		printf("Current Temperature: %lf", temp);
+
+		//print the temp if a valid reading is obtained
+		pthread_mutex_lock(&myData_m);
+		if(cur_temp > -50) 
+			printf("(1)Current Temperature: %lf\n", cur_temp);
+		pthread_mutex_unlock(&myData_m);
+		
 		//check for input. 
 		input = 0;
 		scanf_test = scanf("%d", &input);
+
 		//If ipmroperly formatted,
 		//  set input to 0 to prompt user to input again
 		if (scanf_test == 0)
@@ -169,11 +201,21 @@ void* commandLoop(void*)
 			reset();
 			break;
 		case 2:
-			ping();
+			ping_ret = ping(10);
+
+			//update pic status 
+			pthread_mutex_lock(&myData_m);
+			if(ping_ret == MSG_ACK)
+				myData.picOnline = true;
+			else
+				myData.picOnline = false;
+			pthread_mutex_unlock(&myData_m);
+
 			break;
 		case 3:
+			//print adc value collected from sensor loop
 			pthread_mutex_lock(&myData_m);
-			printf("LDR Value = %d", LDR_Value);
+			printf("LDR Value = %d\n", myData.adcData);
 			pthread_mutex_unlock(&myData_m);
 			break;
 		case 4:
@@ -209,14 +251,17 @@ void* commandLoop(void*)
 			scan_solo = 0;
 			pthread_mutex_unlock(&myData_m);
 			break;
+		case 11:
+			return NULL;
 		default:
 			printf("Please enter a valid number (1 - 10)\n");
 			break;
 		}
 		//print the current temperature reading
 		pthread_mutex_lock(&myData_m);
-		printf("Current Temperature reading: %lf", cur_temp);
+		printf("Current Temperature settings:\n\ttemp = %lf\n\tthreshold = %lf\n", cur_temp, temperature_threshold);
 		pthread_mutex_unlock(&myData_m);
+
 		//ask the user to change the temp threshold
 		printf("Would you like to change the Temperature Threshold?\n (1 = yes)\n");
 		scanf(" %d", &temp_thresh_input);
@@ -230,44 +275,72 @@ void* commandLoop(void*)
 	} while (input != 11);
 }
 
+
+//thread 2 of the system.
+//Every two seconds, it probes the LDR via custom bus and temp sensor via i2c.
+//	and updates the shared variables.
+//if the temp sensor is greater than the set temp threshold and you're in scan mode...
+//	take a picture and save it to file.
+//	save the filename in shared memory to upload to server
 void* sensor_control(void *)
 {
 	while (1)
 	{
 		time_t date = time(NULL);
 		char* cdate;
+
+		//probe the buses for sensor data. Use temp variables to avoid hold and wait
+		//adc_value is mutex protected itself
+		//printf("(2)Calling adc_value\n");
+		int tmpLdr = adc_value();
+
+		//probe temp sensor on the i2c bus
+		//printf("(2) Calling get Temp.");
+		double tmpTemp = get_temp();
+
+		//printf("(2)Read temp: %lf, and ADC: %d\n", tmpTemp, tmpLdr);
+		//update shared state variables
 		pthread_mutex_lock(&myData_m);
-		LDR_Value = adc_value();
-		cur_temp = get_temp();
+		myData.adcData = tmpLdr;
+		cur_temp = tmpTemp;
+		pthread_mutex_unlock(&myData_m);
+
+		//take a picture if above the temp threshold and in scan mode
 		if((cur_temp > temperature_threshold) && (scan_solo == 1))
 		{
+			//form the filename. Filter out spaces, colons and newlines
 			date = time(NULL);
 			cdate = asctime(localtime(&date));
 			for(int i = 0; i < 25; i++)
 			{
-				if (cdate[i] == 32)
+				if (cdate[i] == ' ')
 					{
 						cdate[i] = '_';
 					}
-					else if (cdate[i] == 58)
+					else if (cdate[i] == ':')
 					{
 						cdate[i] = '_';
 					}
-					else if (cdate[i] == 10)
+					else if (cdate[i] == '\n')
 					{
 						cdate[i] = '_';
 					}
 			}
-			printf("Taking picture: %s \n", cdate);
+			printf("(2)Taking picture: %s \n", cdate);
 			capture_and_save_image(cdate);
+
+			//update latest filename
+			pthread_mutex_lock(&myData_m);
+			strcpy(myData.fileName, cdate);
+			pthread_mutex_unlock(&myData_m);
 		}	
-		pthread_mutex_unlock(&myData_m);
+		
 		sleep(2);
 
 	}
 }
 
-//returns a copy of the current state
+//returns a copy of the current state to upload to server
 server_data getCurrentState()
 {
   server_data s;
@@ -316,6 +389,7 @@ int setGPIOMode(char* gpioDirectory, int mode)
 
 	return mode;
 }
+
 //Sets the GPIO pin specified to a new direction
 // ALSO sets the mode of the pin.
 //returns the direction set on success
@@ -462,8 +536,6 @@ void writeNibble(unsigned char data,
 	char* d3,
 	char* strobe)
 {
-	pthread_mutex_lock(&gpio_m);
-
 	//set all the ports to output
 	setGPIODirection(d0, GPIO_DIRECTION_OUT);
 	setGPIODirection(d1, GPIO_DIRECTION_OUT);
@@ -480,8 +552,9 @@ void writeNibble(unsigned char data,
 	writeGPIO(d1, (data & 2) >> 1);
 	writeGPIO(d2, (data & 4) >> 2);
 	writeGPIO(d3, (data & 8) >> 3);
+	usleep(STROBE_DELAY);
 
-	//3: raise strobe and wait at least 10ms
+	//3: raise strobe and wait at least 10ms for PIC to read it
 	writeGPIO(strobe, HIGH);
 	usleep(STROBE_DELAY);
 
@@ -499,7 +572,6 @@ void writeNibble(unsigned char data,
 	writeGPIO(strobe, HIGH);
 	usleep(STROBE_DELAY); //and delay a little bit
 
-	pthread_mutex_unlock(&gpio_m);
 }
 
 //Reads a 4 bit nibble from the bus following the protocol
@@ -511,8 +583,6 @@ int readNibble(char* d0,
 	char* d3,
 	char* strobe)
 {
-	pthread_mutex_lock(&gpio_m);
-
 	unsigned char data = 0x00;
 	int test = 1;
 	//set all the data ports to input, but the strobe to output
@@ -535,7 +605,6 @@ int readNibble(char* d0,
 	test = readGPIO(d0);
 	if (test == ERROR)
 	{
-		pthread_mutex_unlock(&gpio_m);
 		return ERROR;
 	}
 	data += test;
@@ -543,7 +612,6 @@ int readNibble(char* d0,
 	test = readGPIO(d1);
 	if (test == ERROR)
 	{
-		pthread_mutex_unlock(&gpio_m);
 		return ERROR;
 	}
 	data += test << 1;
@@ -551,7 +619,6 @@ int readNibble(char* d0,
 	test = readGPIO(d2);
 	if (test == ERROR)
 	{
-		pthread_mutex_unlock(&gpio_m);
 		return ERROR;
 	}
 	data += test << 2;
@@ -559,7 +626,6 @@ int readNibble(char* d0,
 	test = readGPIO(d3);
 	if (test == ERROR)
 	{
-		pthread_mutex_unlock(&gpio_m);
 		return ERROR;
 	}
 
@@ -568,7 +634,6 @@ int readNibble(char* d0,
 	if (data > 0xF)
 	{
 		printf("Uncaught error reading nibble from the bus");
-		pthread_mutex_unlock(&gpio_m);
 		return ERROR;
 	}
 	//leave strobe high for a bit
@@ -583,73 +648,15 @@ int readNibble(char* d0,
 	writeGPIO(strobe, HIGH);
 	usleep(STROBE_DELAY); //and delay a little bit
 
-	pthread_mutex_unlock(&gpio_m);
 	return (int)data;
 }
 
-// tests the GPIO write and exits
-// connect a scope or something to the strobe port and watch for output
-void testGPIOWrite(char * fh)
-{
-	int i;
-	//test read and write.
-	for (i = 0; i <1000; i++)
-	{
-		int w = writeGPIO(fh, HIGH);
-		assert(w == HIGH && "Write high");
-		usleep(10);
-		w = writeGPIO(fh, LOW);
-		assert(w == LOW && "Write Low");
-		usleep(10);
-	}
-	exit(0);
-}
 
-// tests the GPIO writenibble and exits
-//repeatedly sends nibbles from 0x0 to 0xF
-//How to test: Connect to logic analyzer, watch values
-void testGPIOWriteNibble(char* strobe_fh,
-	char* d4, //48
-	char* d5, //50
-	char* d6, //52
-	char* d7) //54 
-{
-	unsigned i;
-	//test writeNibble
-	for (i = 0; i <1000; i++)
-	{
-		printf("%X\n", i % 0xF);
-		writeNibble(i % 0xF, d4, d5, d6, d7, strobe_fh);
-		usleep(20);
-	}
-	exit(0);
-}
-
-// tests the GPIO readnibble
-void testGPIOReadNibble(char* strobe_fh,
-	char* d4, //48
-	char* d5, //50
-	char* d6, //52
-	char* d7) //54 
-{
-	unsigned i;
-	unsigned data;
-	//test writeNibble
-	for (i = 0; i <1000; i++)
-	{
-		data = readNibble(d4, d5, d6, d7, strobe_fh);
-		printf("read: %X\n", data);
-
-		usleep(STROBE_DELAY);
-	}
-	exit(0);
-}
-
-
-
-//stubs for the command functions
+//command functions
 void reset()
 {
+	//printf("Waiting for custBUs mutex for reset\n");
+	//pthread_mutex_lock(&gpio_m);
 	int receive_msg = 0;
 	while (receive_msg != MSG_ACK)
 	{
@@ -671,14 +678,22 @@ void reset()
 		usleep(STROBE_DELAY);
 	}
 	printf("Reset message sent\n");
+	pthread_mutex_unlock(&gpio_m);
 }
 
-void ping()
+//tries pinging the bus timeout-times.
+//if successful returns MSG_ACK.
+int ping(unsigned timeout)
 {
-	int receive_msg = 0;
-	while (receive_msg != MSG_ACK)
+	//printf("Waiting for custBUs mutex for ping\n");
+	pthread_mutex_lock(&gpio_m);
+	//printf("Aquired the mutex for ping\n");
+	int receive_msg = MSG_NOTHING;
+
+	//timeout after 10 attempts
+	for (int i = 0; (i < 10) && (receive_msg != MSG_ACK); i++)
 	{
-		//printf("Starting to send ping\n");
+		//printf("Writing ping\n");
 		writeNibble(MSG_PING,
 			fileHandleGPIO_4,
 			fileHandleGPIO_5,
@@ -693,9 +708,19 @@ void ping()
 			fileHandleGPIO_7,
 			fileHandleGPIO_S);
 		//printf("Received message from PIC: %x \n", receive_msg);
-		usleep(STROBE_DELAY);
+		usleep(STROBE_DELAY *2); //wait a little extra before trying again
 	}
-	printf("Ping message sent\n");
+	pthread_mutex_unlock(&gpio_m);
+	if(receive_msg == MSG_ACK)
+	{
+		printf("Ping message sent successfully\n");
+	}
+	else
+	{
+		printf("No response from bus\n");
+		receive_msg = MSG_NOTHING;
+	}
+	return receive_msg;
 }
 
 //requests the PIC to send its current adc value MSN (most significant nibble) first
@@ -704,6 +729,10 @@ int adc_value()
 	int i;
 	int receive_msg = 0;
 	int adc_value = 0;
+
+	//printf("Waiting for custBUs mutex for adcVal\n");
+	pthread_mutex_lock(&gpio_m);
+	//printf("Got mutex for ADC\n");
 	while (receive_msg != MSG_ACK)
 	{
 		adc_value = 0;
@@ -738,13 +767,17 @@ int adc_value()
 		//printf("Received ADC ACK(?): 0x%x\n", receive_msg);
 		usleep(STROBE_DELAY);
 	}
-	printf("adc message received successfully: 0x%x\n", adc_value);
+	//printf("adc message received successfully: 0x%x\n", adc_value);
+	pthread_mutex_unlock(&gpio_m);
 	return adc_value;
 }
 
 void servo_30()
 {
 	int receive_msg = 0;
+
+	//printf("Waiting for custBUs mutex for servo 30\n");
+	pthread_mutex_lock(&gpio_m);
 	while (receive_msg != MSG_ACK)
 	{
 		//printf("Starting to send Servo30\n");
@@ -764,6 +797,7 @@ void servo_30()
 		//printf("Received message from PIC: %x \n", receive_msg);
 		usleep(STROBE_DELAY);
 	}
+	pthread_mutex_unlock(&gpio_m);
 	printf("servo_30 message sent\n");
 }
 
@@ -771,6 +805,8 @@ void servo_30()
 void servo_90()
 {
 	int receive_msg = 0;
+	//printf("Waiting for custBUs mutex for Servo_90\n");
+	pthread_mutex_lock(&gpio_m);
 	while (receive_msg != MSG_ACK)
 	{
 		//printf("Starting to send Servo90\n");
@@ -790,12 +826,16 @@ void servo_90()
 		//printf("Received message from PIC: %x \n", receive_msg);
 		usleep(STROBE_DELAY);
 	}
+	pthread_mutex_unlock(&gpio_m);
 	printf("Servo_90 message sent\n");
 }
 
 void servo_120()
 {
 	int receive_msg = 0;
+
+	//printf("Waiting for custBUs mutex for servo 120\n");
+	pthread_mutex_lock(&gpio_m);
 	while (receive_msg != MSG_ACK)
 	{
 		writeNibble(MSG_TURN120,
@@ -814,12 +854,16 @@ void servo_120()
 		//printf("Received message from PIC: %x \n", receive_msg);
 		usleep(STROBE_DELAY);
 	}
+	pthread_mutex_unlock(&gpio_m);
 	printf("Servo_120 message sent\n");
 }
 
 void rotate_servo_90_E()
 {
 	int receive_msg = 0;
+
+	//printf("Waiting for custBUs mutex for S90 Enable\n");
+	pthread_mutex_lock(&gpio_m);
 	while (receive_msg != MSG_ACK)
 	{
 		//printf("Starting to send Rotate Servo90\n");
@@ -839,12 +883,16 @@ void rotate_servo_90_E()
 		//printf("Received message from PIC: %x \n", receive_msg);
 		usleep(STROBE_DELAY);
 	}
+	pthread_mutex_unlock(&gpio_m);
 	printf("rotate_servo_90 message sent\n");
 }
 
 void rotate_servo_180_E()
 {
 	int receive_msg = 0;
+
+	//printf("Waiting for custBUs mutex for servo 180 enable\n");
+	pthread_mutex_lock(&gpio_m);
 	while (receive_msg != MSG_ACK)
 	{
 		//printf("Starting to send Rotate Servo180\n");
@@ -864,12 +912,16 @@ void rotate_servo_180_E()
 		//printf("Received message from PIC: %x \n", receive_msg);
 		usleep(STROBE_DELAY);
 	}
+	pthread_mutex_unlock(&gpio_m);
 	printf("rotate_servo_180 message sent\n");
 }
 
 void rotate_servo_90_D()
 {
 	int receive_msg = 0;
+
+	//printf("Waiting for custBUs mutex for Servo 90 D\n");
+	pthread_mutex_lock(&gpio_m);
 	while (receive_msg != MSG_ACK)
 	{
 		//printf("Starting to send Rotate Servo90 disable\n");
@@ -889,12 +941,16 @@ void rotate_servo_90_D()
 		//printf("Received message from PIC: %x \n", receive_msg);
 		usleep(STROBE_DELAY);
 	}
+	pthread_mutex_unlock(&gpio_m);
 	printf("rotate_servo_90 disable message sent\n");
 }
 
 void rotate_servo_180_D()
 {
 	int receive_msg = 0;
+
+	//printf("Waiting for custBUs mutex for rotate 180 D\n");
+	pthread_mutex_lock(&gpio_m);
 	while (receive_msg != MSG_ACK)
 	{
 		//printf("Starting to send Rotate Servo180 disable\n");
@@ -914,5 +970,6 @@ void rotate_servo_180_D()
 		//printf("Received message from PIC: %x \n", receive_msg);
 		usleep(STROBE_DELAY);
 	}
+	pthread_mutex_unlock(&gpio_m);
 	printf("rotate_servo_180 disable message sent\n");
 }

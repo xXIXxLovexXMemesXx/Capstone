@@ -22,7 +22,7 @@ void getPostRequest(char* buffer, int length, int picAdcValue, char* picStatus, 
 
   //format the whole url
   int ret = snprintf(buffer,length, 
-    "http://%s:%d/update?/id=%d&password=%s&name=%s&data=%d&status=%s&timestamp=%s&filename=%s",
+    "http://%s:%d/update?id=%d&password=%s&name=%s&data=%d&status=%s&timestamp=%s&filename=%s",
     SERVER_HOSTNAME, SERVER_PORTNUMBER, GROUP_ID, PASSWORD, STUDENT_NAME, picAdcValue,
     picStatus, timeStamp, filename);
   
@@ -41,12 +41,16 @@ void HTTP_POST(const char* url){ //} const char* image, int size){
   if(curl)
   {
     curl_easy_setopt(curl, CURLOPT_URL, url);
-    curl_easy_setopt(curl, CURLOPT_POST, 1);
-    curl_easy_setopt(curl, CURLOPT_TIMEOUT, 20); //complete in 20 seconds or else
+    //curl_easy_setopt(curl, CURLOPT_POST, 1);
+
+    //write data to stderr so I can dump it to /dev/null 
+    curl_easy_setopt(curl, CURLOPT_WRITEDATA, stderr);
+    curl_easy_setopt(curl, CURLOPT_NOSIGNAL, 1);
+    curl_easy_setopt(curl, CURLOPT_TIMEOUT_MS, 1500); //complete in 1.5 seconds or else
     
     res = curl_easy_perform(curl);
     if(res != CURLE_OK)
-            fprintf(stderr, "curl_easy_perform() failed: %s\n",curl_easy_strerror(res));
+      fprintf(stderr, "curl_easy_perform() failed: %s\n",curl_easy_strerror(res));
     curl_easy_cleanup(curl);
   }
 }
@@ -70,6 +74,8 @@ void* serverPostLoop(void * x)
 
     //update data
     server_data currentState = getCurrentState();
+
+    //format post string 
     strncpy(filename, currentState.fileName, MAX_FILENAME);
     if(currentState.picOnline)
     {
@@ -81,11 +87,11 @@ void* serverPostLoop(void * x)
     }
     picAdcValue = currentState.adcData;
     
-    //format post string 
     getPostRequest(postBuffer, MAX_POST, picAdcValue, picStatus, timeStamp, filename);
 
     //send it
-    printf("Post: %s\n\n", postBuffer);
+    //printf("(3)Post: %s\n\n", postBuffer);
     HTTP_POST(postBuffer);
+
   }
 }
