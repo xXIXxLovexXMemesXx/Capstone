@@ -17,15 +17,16 @@
 #define MSG_ACK         0xE
 #define MSG_NOTHING     0xF
 
+#define END_DELAY       50  //ms delay at the end of bus functions
 /* Circuit Connections
    Signal STROBE    RC6
-   Signal D0        RC3
+   Signal D0        RC2
    Signal D1        RC1
    Signal D2        RC7
    Signal D3        RC5
  * ////just don't use C4 
  * Analog           RA1
- * Servo            RC2
+ * Servo            RC3
  */
 
 ////Global state variables.
@@ -42,8 +43,11 @@ void test_main();
 
 void adc_init(void)  {
     //  Configure ADC module  
-    TRISAbits.TRISA1 = 1;   //set pin A1 to input
-    ANSELAbits.ANSA1 = 1;   //set as analog input
+    TRISA = 0; //set rest of port to digital output
+    ANSELA = 0;
+    
+    TRISAbits.TRISA1 = 1;   //set pin A1 to Analog input
+    ANSELAbits.ANSA1 = 1;   
     ADCON1 = 0;
     ADCON2 = 0;
     ADCON3 = 0;
@@ -74,8 +78,9 @@ void set_pwm_duty(unsigned duty)
 void everything_init()
 {
     ////init PWM module
-    //Set whole port B to output
+    //Set whole port C to digital output
     TRISC = 0; 
+    ANSELC = 0; //ansel is 1 by default
     
     //set frquency of PWM
     //PWM period = 20ms = [(PR2) + 1]] * 4* _XTAL_FREQ * TMR2 prescale
@@ -92,7 +97,7 @@ void everything_init()
     CCPTMRS0 = 0x01;
     
     //set RxyPPS to let CCP1 take over C2
-    RC2PPS = 0x09;
+    //RC2PPS = 0x09;
     
     //configure + start TIMER2
     T2CLKCON = 0x01; // set timer source to FOSC/4
@@ -115,19 +120,50 @@ void everything_init()
     adc_init();
 }
 
+//adjust the scan counter and bounce off of limits 
+void handle_scan()
+{
+    //if timer 0 overflows
+    if(PIR0bits.TMR0IF && isScanning)
+    {
+       PIR0bits.TMR0IF = 0; //reset the overflow flag
+       
+       //adust scan counter
+       if(isScanningUp)
+           scanCounter +=2;
+       else
+           scanCounter -=2;
+       
+       //set new duty
+       set_pwm_duty(scanCounter);
+       
+       //bounce of boundaries
+       if(scanCounter >= scanUpperLimit)
+           isScanningUp = 0;
+       else if(scanCounter <= scanLowerLimit)
+           isScanningUp = 1;
+    }
+}
 
 //do nothing while the strobe bus is in the current state
 void wait_while_strobe(int state)
 {
-    while(PORTCbits.RC6 == state) {}
+    while(PORTCbits.RC6 == state) 
+    {
+        handle_scan();
+        (void) 0; //do nothing
+    }
 }
 
 //puts a nibble on the bus
 //only sends the lower 4 bits of whatever you pass
 void send_nibble(unsigned char nibble)
 {
-    TRISC = 0b01000000;
-    PORTCbits.RC3 = (nibble) & 1;
+    //everything is output but strobe
+    TRISC = 0;
+    TRISCbits.TRISC6 = 1;
+    
+    PORTCbits.RC2 = (nibble) & 1;
     PORTCbits.RC1 = (nibble >> 1) & 1 ;
     PORTCbits.RC7 = (nibble >> 2) & 1 ;
     PORTCbits.RC5 = (nibble >> 3) & 1;
@@ -136,6 +172,7 @@ void send_nibble(unsigned char nibble)
 //following the strobe bus protocl
 void sensor_ping()
 {
+    wait_while_strobe(0); //autocorrecting. Don't start until bus is high
     printf("PING\n");
     wait_while_strobe(1);
     
@@ -145,11 +182,14 @@ void sensor_ping()
     wait_while_strobe(0);
     wait_while_strobe(1);
     wait_while_strobe(0);
+    printf("Success\n");
+    __delay_ms(END_DELAY);
 }
 
 //resets state variables and sets servo position to 0
 void sensor_reset()
 {
+    wait_while_strobe(0); //autocorrecting. Don't start until bus is high
     printf("REEEEEEEEEEEEEEEEEEEEEEEset\n");
     wait_while_strobe(1);
     
@@ -167,6 +207,7 @@ void sensor_reset()
     wait_while_strobe(0);
     wait_while_strobe(1);
     wait_while_strobe(0);
+    __delay_ms(END_DELAY);
 }
 
 //sends ADC results in 3 nibbles
@@ -187,44 +228,47 @@ void send_adc_results()
     nib3 = (results & 0x00F);
     
     wait_while_strobe(0); //only start when the bus is high
-    wait_while_strobe(1); //wait for the bus to go low
     
-    //send the first nibble
+    wait_while_strobe(1); //wait for hte bus to go low
+    //send the first nibble when the bus goes low
     send_nibble(nib1);
     
     wait_while_strobe(0); //wait for bus to go high again
     wait_while_strobe(1); //then for strobe to go low again
     wait_while_strobe(0); //then high.. end the write
-    wait_while_strobe(1); //then low
     
+    wait_while_strobe(1); //then low
     //send the second nibble
     send_nibble(nib2);
     
     wait_while_strobe(0); //wait for bus to go high again
     wait_while_strobe(1); //then for strobe to go low again
     wait_while_strobe(0); //then high.. end the write
+   
     wait_while_strobe(1); //then low
-    
     //send the third nibble
     send_nibble(nib3);
     
     wait_while_strobe(0); //wait for bus to go high again
     wait_while_strobe(1); //then for strobe to go low again
     wait_while_strobe(0); //then high.. end the write
-    wait_while_strobe(1); //then low
     
+    wait_while_strobe(1); //then low
     //send ACK
     send_nibble(MSG_ACK);
     
     wait_while_strobe(0); //G reads ack
     wait_while_strobe(1); //G is done reading
     wait_while_strobe(0); //G is done on the bus
+    __delay_ms(END_DELAY);
 }
 
 //turn the servo to a position that may be 30 degrees
 void turn_30()
 {
+    wait_while_strobe(0); //autocorrecting. Don't start until bus is high
     printf("turn 30\n");
+    wait_while_strobe(0); //autocorrecting. Don't start until bus is high
     wait_while_strobe(1);
     
     //action here
@@ -238,11 +282,13 @@ void turn_30()
     wait_while_strobe(0);
     wait_while_strobe(1);
     wait_while_strobe(0);
+    __delay_ms(END_DELAY);
 }
 
 //turn the servo to a position that may be 90 degrees
 void turn_90()
 {
+    wait_while_strobe(0); //autocorrecting. Don't start until bus is high
     printf("servo 90\n");
     wait_while_strobe(1);
     
@@ -257,11 +303,13 @@ void turn_90()
     wait_while_strobe(0);
     wait_while_strobe(1);
     wait_while_strobe(0);
+    __delay_ms(END_DELAY);
 }
 
 //turn the servo to a position that may be 120 degrees
 void turn_120()
 {
+    wait_while_strobe(0); //autocorrecting. Don't start until bus is high
     printf("scan 120\n");
     wait_while_strobe(1);
     
@@ -276,11 +324,13 @@ void turn_120()
     wait_while_strobe(0);
     wait_while_strobe(1);
     wait_while_strobe(0);
+    __delay_ms(END_DELAY);
 }
 
 //enter scan mode
 void enter_scan_mode()
 {
+    wait_while_strobe(0); //autocorrecting. Don't start until bus is high
     printf("enter scan\n");
     wait_while_strobe(1);
     
@@ -294,10 +344,12 @@ void enter_scan_mode()
     wait_while_strobe(0);
     wait_while_strobe(1);
     wait_while_strobe(0);
+    __delay_ms(END_DELAY);
 }
 
 void rotate_90_enable()
 {
+    wait_while_strobe(0); //autocorrecting. Don't start until bus is high
     printf("set scanning to 90degrees\n");
     wait_while_strobe(1);
     
@@ -313,10 +365,12 @@ void rotate_90_enable()
     wait_while_strobe(0);
     wait_while_strobe(1);
     wait_while_strobe(0);
+    __delay_ms(END_DELAY);
 }
 
 void rotate_180_enable()
 {
+    wait_while_strobe(0); //autocorrecting. Don't start until bus is high
     printf("set scanning to 18 0degrees\n");
     wait_while_strobe(1);
     
@@ -332,10 +386,12 @@ void rotate_180_enable()
     wait_while_strobe(0);
     wait_while_strobe(1);
     wait_while_strobe(0);
+    __delay_ms(END_DELAY);
 }
 
 void disable_rotate()
 {
+    wait_while_strobe(0); //autocorrecting. Don't start until bus is high
     printf("set scanning to 18 0degrees\n");
     wait_while_strobe(1);
     
@@ -349,15 +405,16 @@ void disable_rotate()
     wait_while_strobe(0);
     wait_while_strobe(1);
     wait_while_strobe(0);
+    __delay_ms(END_DELAY);
 }
 
 //returns whatever nibble was on the bus
 unsigned char return_bus_nibble()
 {
-    return (PORTCbits.RC5 << 3) &
-           (PORTCbits.RC7 << 2) &
-           (PORTCbits.RC1 << 1) &
-           PORTCbits.RC3;
+    return (PORTCbits.RC5 << 3) +
+           (PORTCbits.RC7 << 2) +
+           (PORTCbits.RC1 << 1) +
+           PORTCbits.RC2;
 }
 //expect to receive a message and return it
 unsigned char receive_msg()
@@ -365,47 +422,29 @@ unsigned char receive_msg()
     unsigned results;
     
     //clear output Latch
-    PORTC = 0;
+    /* PORTCbits.RC5 = 0;
+    PORTCbits.RC7 = 0;
+    PORTCbits.RC1 = 0;
+    PORTCbits.RC2 = 0; */
+    
     //Set strobe and the data pins as digital inputs //C 13567
-    TRISC = 0b11101010;
+    TRISC = 0b11100110;
     
     wait_while_strobe(1);
+    wait_while_strobe(0);
     //continuously read the bus while the strobe is low
-    while(PORTCbits.RC6 == 0)
+    while(PORTCbits.RC6 == 1)
     {
         results = return_bus_nibble();
     }
     
-    wait_while_strobe(1); //finish the bus cycle
-    wait_while_strobe(0);
+    wait_while_strobe(0); //finish the bus cycle
+    
     
     return results;
 }
 
-//adjust the scan counter and bounce off of limits 
-void handle_scan()
-{
-    //if timer 0 overflows
-    if(PIR0bits.TMR0IF)
-    {
-       PIR0bits.TMR0IF = 0; //reset the overflow flag
-       
-       //adust scan counter
-       if(isScanningUp)
-           ++scanCounter;
-       else
-           --scanCounter;
-       
-       //set new duty
-       set_pwm_duty(scanCounter);
-       
-       //bounce of boundaries
-       if(scanCounter >= scanUpperLimit)
-           isScanningUp = 0;
-       else if(scanCounter <= scanLowerLimit)
-           isScanningUp = 1;
-    }
-}
+
 
 // Main program
 void main (void)
@@ -413,7 +452,7 @@ void main (void)
     //init modules
     SYSTEM_Initialize();
     everything_init();
-
+    
     //init state
     unsigned char msg = MSG_NOTHING;
     set_pwm_duty(50);
@@ -424,6 +463,10 @@ void main (void)
     
     //test_scan();
     
+    //long blink means it setup fine
+    PORTAbits.RA0 = 1;
+    __delay_ms(1000);
+    PORTAbits.RA0 = 0;
     while(1)
     {  
         //handle Scanning
