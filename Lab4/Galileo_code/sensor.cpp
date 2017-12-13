@@ -5,18 +5,6 @@
 
 using namespace std;
 
-//sensor access functions
-bool capture_and_save_image(char* filename);
-double get_temp(); // temperature in C
-
-void* sensorLoop(void * x)
-{
-  //todo main logic of sensor Loop
-}
-
-
-
-//sensor access
 
 //read image from filename
 //if successful, save as a file -- .png and retrun true

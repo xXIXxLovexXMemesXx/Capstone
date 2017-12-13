@@ -12,8 +12,10 @@
 
 #define TMP102Address 0x48
 
-//sensor loop
-void* sensorLoop(void * x);
+//sensor access functions
+bool capture_and_save_image(char* filename);
+
+double get_temp(); // temperature in C
 
 
 #endif

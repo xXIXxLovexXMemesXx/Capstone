@@ -8,19 +8,17 @@
 #include "net.h"
 #include "sensor.h"
 #include "mraa.hpp"
-#include "camera.h"
-#include "camera.cpp"
 #include <assert.h>
 #include <stdlib.h>
 #include <fcntl.h>
 
 
 //Linux GPIO number // Shield Pin Name
-#define Strobe                  (40) // 8
-#define GP_4                    (48) // A0
-#define GP_5                    (50) // A1
-#define GP_6                    (52) // A2
-#define GP_7                    (54) // A3
+#define Strobe                  (40) // 8		white
+#define GP_4                    (48) // A0	yellow
+#define GP_5                    (50) // A1	green
+#define GP_6                    (52) // A2	blue
+#define GP_7                    (54) // A3	red
 
 #define GPIO_DIRECTION_IN       (1)//Go HIGH (acoording to handout timing diagram))
 #define GPIO_DIRECTION_OUT      (0)//Go LOW (acoording to handout timing diagram))
@@ -43,7 +41,7 @@
 #define MSG_TURN90  0x4
 #define MSG_TURN120 0x5
 #define MSG_ROTATE90_E 0x6
-#define MSG_Rotate90_D 0x8
+#define MSG_ROTATE90_D 0x8
 #define MSG_ROTATE180_E 0x7
 #define MSG_ROTATE180_D 0x9
 
@@ -61,10 +59,15 @@ server_data myData;
 pthread_mutex_t myData_m;
 const int addr = 0x32;
 
+//keep track of sensor data
+double temperature_threshold = 30;
+int LDR_Value;
+double cur_temp;
+
 //Functions definitions - for commands
 void reset();
 void ping();
-void adc_value();
+int adc_value();
 void servo_30();
 void servo_90();
 void servo_120();
@@ -72,8 +75,17 @@ void rotate_servo_90_E();
 void rotate_servo_180_E();
 void rotate_servo_90_D();
 void rotate_servo_180_D();
-void commandloop();
-void sensor_control();
+void* commandLoop(void *);
+void* sensor_control(void *);
+
+//bus output functions
+int setGPIOMode(char* gpioDirectory, int mode);
+int setGPIODirection(char* gpioDirectory, int direction);
+int writeGPIO(char* gpioDirectory, int value);
+char* openGPIO(int gpio_handle, int direction);
+int readGPIO(char* gpioDirectory);
+void writeNibble(unsigned char data, char* d0, char* d1, char* d2, char* d3, char* strobe);
+int readNibble(char* d0, char* d1, char* d2,char* d3, char* strobe);
 
 //File handles for the pins
 char* fileHandleGPIO_4;
@@ -81,6 +93,7 @@ char* fileHandleGPIO_5;
 char* fileHandleGPIO_6;
 char* fileHandleGPIO_7;
 char* fileHandleGPIO_S;
+pthread_mutex_t gpio_m;
 
 //variable for scan mode
 int scan_solo;
@@ -90,10 +103,19 @@ int main()
 {
   ////init shared stuff
   pthread_mutex_init(&myData_m, NULL);
+  pthread_mutex_init(&gpio_m, NULL);
+
   //init data structure
   myData.picOnline = false; //true if pic is online
   myData.adcData = 0; //value of PIC adc
   strncpy(myData.fileName, DEFAULT_FILENAME, MAX_FILENAME); //filename of last 
+
+  //init GPIO pins
+  fileHandleGPIO_4 = openGPIO(GP_4, GPIO_DIRECTION_OUT);
+	fileHandleGPIO_5 = openGPIO(GP_5, GPIO_DIRECTION_OUT);
+	fileHandleGPIO_6 = openGPIO(GP_6, GPIO_DIRECTION_OUT);
+	fileHandleGPIO_7 = openGPIO(GP_7, GPIO_DIRECTION_OUT);
+	fileHandleGPIO_S = openGPIO(Strobe, GPIO_DIRECTION_OUT);
 
   ////create threads
   pthread_t command_thread;
@@ -111,15 +133,8 @@ int main()
 
 
 
-void commandloop()
+void* commandLoop(void*)
 {
-
-	fileHandleGPIO_4 = openGPIO(GP_4, GPIO_DIRECTION_OUT);
-	fileHandleGPIO_5 = openGPIO(GP_5, GPIO_DIRECTION_OUT);
-	fileHandleGPIO_6 = openGPIO(GP_6, GPIO_DIRECTION_OUT);
-	fileHandleGPIO_7 = openGPIO(GP_7, GPIO_DIRECTION_OUT);
-	fileHandleGPIO_S = openGPIO(Strobe, GPIO_DIRECTION_OUT);
-
 	int input;
 	int temp_thresh_input;
 	int scanf_test;
@@ -171,25 +186,25 @@ void commandloop()
 			servo_120();
 			break;
 		case 7:
-			rotate_servo_90_e();
+			rotate_servo_90_E();
 			pthread_mutex_lock(&myData_m);
 			scan_solo = 1;
 			pthread_mutex_unlock(&myData_m);
 			break;
 		case 8:
-			rotate_servo_180_e();
+			rotate_servo_180_E();
 			pthread_mutex_lock(&myData_m);
 			scan_solo = 1;
 			pthread_mutex_unlock(&myData_m);
 			break;
 		case 9:
-			rotate_servo_90_d;
+			rotate_servo_90_D();
 			pthread_mutex_lock(&myData_m);
 			scan_solo = 0;
 			pthread_mutex_unlock(&myData_m);
 			break;
 		case 10:
-			rotate_servo_180_d;
+			rotate_servo_180_D();
 			pthread_mutex_lock(&myData_m);
 			scan_solo = 0;
 			pthread_mutex_unlock(&myData_m);
@@ -215,16 +230,16 @@ void commandloop()
 	} while (input != 11);
 }
 
-void sensor_control()
+void* sensor_control(void *)
 {
 	while (1)
 	{
 		time_t date = time(NULL);
 		char* cdate;
-		pthread_mutex_lock(&mydata_m);
+		pthread_mutex_lock(&myData_m);
 		LDR_Value = adc_value();
 		cur_temp = get_temp();
-		if((cur_temp > temperature_threshold) && (scan_solo == 1)
+		if((cur_temp > temperature_threshold) && (scan_solo == 1))
 		{
 			date = time(NULL);
 			cdate = asctime(localtime(&date));
@@ -246,9 +261,8 @@ void sensor_control()
 			printf("Taking picture: %s \n", cdate);
 			capture_and_save_image(cdate);
 		}	
-		pthread_mutex_unlock(&mydata_m);
-		sleep(2)
-
+		pthread_mutex_unlock(&myData_m);
+		sleep(2);
 
 	}
 }
@@ -395,7 +409,7 @@ char* openGPIO(int gpio_handle, int direction)
 	}
 
 	//form the file name of the newly created gpio directory
-	char *gpioDirectory = malloc(BUFFER_SIZE);
+	char *gpioDirectory = (char *) malloc(BUFFER_SIZE);
 
 	n = snprintf(gpioDirectory, BUFFER_SIZE, "/sys/class/gpio/gpio%d/", gpio_handle);
 	if (n >= BUFFER_SIZE)
@@ -448,6 +462,8 @@ void writeNibble(unsigned char data,
 	char* d3,
 	char* strobe)
 {
+	pthread_mutex_lock(&gpio_m);
+
 	//set all the ports to output
 	setGPIODirection(d0, GPIO_DIRECTION_OUT);
 	setGPIODirection(d1, GPIO_DIRECTION_OUT);
@@ -482,6 +498,8 @@ void writeNibble(unsigned char data,
 	//....let the bus float high again
 	writeGPIO(strobe, HIGH);
 	usleep(STROBE_DELAY); //and delay a little bit
+
+	pthread_mutex_unlock(&gpio_m);
 }
 
 //Reads a 4 bit nibble from the bus following the protocol
@@ -493,6 +511,8 @@ int readNibble(char* d0,
 	char* d3,
 	char* strobe)
 {
+	pthread_mutex_lock(&gpio_m);
+
 	unsigned char data = 0x00;
 	int test = 1;
 	//set all the data ports to input, but the strobe to output
@@ -514,28 +534,41 @@ int readNibble(char* d0,
 	writeGPIO(strobe, HIGH);
 	test = readGPIO(d0);
 	if (test == ERROR)
+	{
+		pthread_mutex_unlock(&gpio_m);
 		return ERROR;
+	}
 	data += test;
 
 	test = readGPIO(d1);
 	if (test == ERROR)
+	{
+		pthread_mutex_unlock(&gpio_m);
 		return ERROR;
+	}
 	data += test << 1;
 
 	test = readGPIO(d2);
 	if (test == ERROR)
+	{
+		pthread_mutex_unlock(&gpio_m);
 		return ERROR;
+	}
 	data += test << 2;
 
 	test = readGPIO(d3);
 	if (test == ERROR)
+	{
+		pthread_mutex_unlock(&gpio_m);
 		return ERROR;
+	}
 
 	data += test << 3;
 
 	if (data > 0xF)
 	{
 		printf("Uncaught error reading nibble from the bus");
+		pthread_mutex_unlock(&gpio_m);
 		return ERROR;
 	}
 	//leave strobe high for a bit
@@ -549,6 +582,8 @@ int readNibble(char* d0,
 	//....let the bus float high again
 	writeGPIO(strobe, HIGH);
 	usleep(STROBE_DELAY); //and delay a little bit
+
+	pthread_mutex_unlock(&gpio_m);
 	return (int)data;
 }
 
@@ -618,21 +653,21 @@ void reset()
 	int receive_msg = 0;
 	while (receive_msg != MSG_ACK)
 	{
-		printf("Starting to send reset\n");
+		//printf("Starting to send reset\n");
 		writeNibble(MSG_RESET,
 			fileHandleGPIO_4,
 			fileHandleGPIO_5,
 			fileHandleGPIO_6,
 			fileHandleGPIO_7,
 			fileHandleGPIO_S);
-		printf("Wrote Nibble to line\n");
+		//printf("Wrote Nibble to line\n");
 		usleep(STROBE_DELAY);
 		receive_msg = readNibble(fileHandleGPIO_4,
 			fileHandleGPIO_5,
 			fileHandleGPIO_6,
 			fileHandleGPIO_7,
 			fileHandleGPIO_S);
-		printf("Received message from PIC: %x \n", receive_msg);
+		//printf("Received message from PIC: %x \n", receive_msg);
 		usleep(STROBE_DELAY);
 	}
 	printf("Reset message sent\n");
@@ -643,21 +678,21 @@ void ping()
 	int receive_msg = 0;
 	while (receive_msg != MSG_ACK)
 	{
-		printf("Starting to send ping\n");
+		//printf("Starting to send ping\n");
 		writeNibble(MSG_PING,
 			fileHandleGPIO_4,
 			fileHandleGPIO_5,
 			fileHandleGPIO_6,
 			fileHandleGPIO_7,
 			fileHandleGPIO_S);
-		printf("Wrote ping to bus\n");
+		//printf("Wrote ping to bus\n");
 		usleep(STROBE_DELAY);
 		receive_msg = readNibble(fileHandleGPIO_4,
 			fileHandleGPIO_5,
 			fileHandleGPIO_6,
 			fileHandleGPIO_7,
 			fileHandleGPIO_S);
-		printf("Received message from PIC: %x \n", receive_msg);
+		//printf("Received message from PIC: %x \n", receive_msg);
 		usleep(STROBE_DELAY);
 	}
 	printf("Ping message sent\n");
@@ -673,7 +708,7 @@ int adc_value()
 	{
 		adc_value = 0;
 		receive_msg = 0;
-		printf("Starting to send ADC_request\n");
+		//printf("Starting to send ADC_request\n");
 		writeNibble(MSG_GET,
 			fileHandleGPIO_4,
 			fileHandleGPIO_5,
@@ -691,7 +726,7 @@ int adc_value()
 				fileHandleGPIO_7,
 				fileHandleGPIO_S);
 			adc_value += ((unsigned)receive_msg) << i;
-			printf("Received ADC Nibble: 0x%x\n", receive_msg);
+			//printf("Received ADC Nibble: 0x%x\n", receive_msg);
 			usleep(STROBE_DELAY);
 		}
 		//expect one last ACK message
@@ -700,7 +735,7 @@ int adc_value()
 			fileHandleGPIO_6,
 			fileHandleGPIO_7,
 			fileHandleGPIO_S);
-		printf("Received ADC ACK(?): 0x%x\n", receive_msg);
+		//printf("Received ADC ACK(?): 0x%x\n", receive_msg);
 		usleep(STROBE_DELAY);
 	}
 	printf("adc message received successfully: 0x%x\n", adc_value);
@@ -712,21 +747,21 @@ void servo_30()
 	int receive_msg = 0;
 	while (receive_msg != MSG_ACK)
 	{
-		printf("Starting to send Servo30\n");
+		//printf("Starting to send Servo30\n");
 		writeNibble(MSG_TURN30,
 			fileHandleGPIO_4,
 			fileHandleGPIO_5,
 			fileHandleGPIO_6,
 			fileHandleGPIO_7,
 			fileHandleGPIO_S);
-		printf("Wrote Nibble to Line Servo30\n");
+		//printf("Wrote Nibble to Line Servo30\n");
 		usleep(STROBE_DELAY);
 		receive_msg = readNibble(fileHandleGPIO_4,
 			fileHandleGPIO_5,
 			fileHandleGPIO_6,
 			fileHandleGPIO_7,
 			fileHandleGPIO_S);
-		printf("Received message from PIC: %x \n", receive_msg);
+		//printf("Received message from PIC: %x \n", receive_msg);
 		usleep(STROBE_DELAY);
 	}
 	printf("servo_30 message sent\n");
@@ -738,21 +773,21 @@ void servo_90()
 	int receive_msg = 0;
 	while (receive_msg != MSG_ACK)
 	{
-		printf("Starting to send Servo90\n");
+		//printf("Starting to send Servo90\n");
 		writeNibble(MSG_TURN90,
 			fileHandleGPIO_4,
 			fileHandleGPIO_5,
 			fileHandleGPIO_6,
 			fileHandleGPIO_7,
 			fileHandleGPIO_S);
-		printf("Wrote Nibble to bus\n");
+		//printf("Wrote Nibble to bus\n");
 		usleep(STROBE_DELAY);
 		receive_msg = readNibble(fileHandleGPIO_4,
 			fileHandleGPIO_5,
 			fileHandleGPIO_6,
 			fileHandleGPIO_7,
 			fileHandleGPIO_S);
-		printf("Received message from PIC: %x \n", receive_msg);
+		//printf("Received message from PIC: %x \n", receive_msg);
 		usleep(STROBE_DELAY);
 	}
 	printf("Servo_90 message sent\n");
@@ -769,14 +804,14 @@ void servo_120()
 			fileHandleGPIO_6,
 			fileHandleGPIO_7,
 			fileHandleGPIO_S);
-		printf("Wrote Nibble to bus\n");
+		//printf("Wrote Nibble to bus\n");
 		usleep(STROBE_DELAY);
 		receive_msg = readNibble(fileHandleGPIO_4,
 			fileHandleGPIO_5,
 			fileHandleGPIO_6,
 			fileHandleGPIO_7,
 			fileHandleGPIO_S);
-		printf("Received message from PIC: %x \n", receive_msg);
+		//printf("Received message from PIC: %x \n", receive_msg);
 		usleep(STROBE_DELAY);
 	}
 	printf("Servo_120 message sent\n");
@@ -787,21 +822,21 @@ void rotate_servo_90_E()
 	int receive_msg = 0;
 	while (receive_msg != MSG_ACK)
 	{
-		printf("Starting to send Rotate Servo90\n");
-		writeNibble(MSG_ROTATE90,
+		//printf("Starting to send Rotate Servo90\n");
+		writeNibble(MSG_ROTATE90_E,
 			fileHandleGPIO_4,
 			fileHandleGPIO_5,
 			fileHandleGPIO_6,
 			fileHandleGPIO_7,
 			fileHandleGPIO_S);
-		printf("Wrote Nibble to Line Rotate Servo90\n");
+		//printf("Wrote Nibble to Line Rotate Servo90\n");
 		usleep(STROBE_DELAY);
 		receive_msg = readNibble(fileHandleGPIO_4,
 			fileHandleGPIO_5,
 			fileHandleGPIO_6,
 			fileHandleGPIO_7,
 			fileHandleGPIO_S);
-		printf("Received message from PIC: %x \n", receive_msg);
+		//printf("Received message from PIC: %x \n", receive_msg);
 		usleep(STROBE_DELAY);
 	}
 	printf("rotate_servo_90 message sent\n");
@@ -812,21 +847,21 @@ void rotate_servo_180_E()
 	int receive_msg = 0;
 	while (receive_msg != MSG_ACK)
 	{
-		printf("Starting to send Rotate Servo180\n");
-		writeNibble(MSG_ROTATE180,
+		//printf("Starting to send Rotate Servo180\n");
+		writeNibble(MSG_ROTATE180_E,
 			fileHandleGPIO_4,
 			fileHandleGPIO_5,
 			fileHandleGPIO_6,
 			fileHandleGPIO_7,
 			fileHandleGPIO_S);
-		printf("Wrote Nibble to Line Rotate Servo180\n");
+		//printf("Wrote Nibble to Line Rotate Servo180\n");
 		usleep(STROBE_DELAY);
 		receive_msg = readNibble(fileHandleGPIO_4,
 			fileHandleGPIO_5,
 			fileHandleGPIO_6,
 			fileHandleGPIO_7,
 			fileHandleGPIO_S);
-		printf("Received message from PIC: %x \n", receive_msg);
+		//printf("Received message from PIC: %x \n", receive_msg);
 		usleep(STROBE_DELAY);
 	}
 	printf("rotate_servo_180 message sent\n");
@@ -837,21 +872,21 @@ void rotate_servo_90_D()
 	int receive_msg = 0;
 	while (receive_msg != MSG_ACK)
 	{
-		printf("Starting to send Rotate Servo90 disable\n");
-		writeNibble(MSG_ROTATE90,
+		//printf("Starting to send Rotate Servo90 disable\n");
+		writeNibble(MSG_ROTATE90_D,
 			fileHandleGPIO_4,
 			fileHandleGPIO_5,
 			fileHandleGPIO_6,
 			fileHandleGPIO_7,
 			fileHandleGPIO_S);
-		printf("Wrote Nibble to Line Rotate Servo90 disable\n");
+		//printf("Wrote Nibble to Line Rotate Servo90 disable\n");
 		usleep(STROBE_DELAY);
 		receive_msg = readNibble(fileHandleGPIO_4,
 			fileHandleGPIO_5,
 			fileHandleGPIO_6,
 			fileHandleGPIO_7,
 			fileHandleGPIO_S);
-		printf("Received message from PIC: %x \n", receive_msg);
+		//printf("Received message from PIC: %x \n", receive_msg);
 		usleep(STROBE_DELAY);
 	}
 	printf("rotate_servo_90 disable message sent\n");
@@ -862,21 +897,21 @@ void rotate_servo_180_D()
 	int receive_msg = 0;
 	while (receive_msg != MSG_ACK)
 	{
-		printf("Starting to send Rotate Servo180 disable\n");
-		writeNibble(MSG_ROTATE180,
+		//printf("Starting to send Rotate Servo180 disable\n");
+		writeNibble(MSG_ROTATE180_D,
 			fileHandleGPIO_4,
 			fileHandleGPIO_5,
 			fileHandleGPIO_6,
 			fileHandleGPIO_7,
 			fileHandleGPIO_S);
-		printf("Wrote Nibble to Line Rotate Servo180 disable \n");
+		//printf("Wrote Nibble to Line Rotate Servo180 disable \n");
 		usleep(STROBE_DELAY);
 		receive_msg = readNibble(fileHandleGPIO_4,
 			fileHandleGPIO_5,
 			fileHandleGPIO_6,
 			fileHandleGPIO_7,
 			fileHandleGPIO_S);
-		printf("Received message from PIC: %x \n", receive_msg);
+		//printf("Received message from PIC: %x \n", receive_msg);
 		usleep(STROBE_DELAY);
 	}
 	printf("rotate_servo_180 disable message sent\n");

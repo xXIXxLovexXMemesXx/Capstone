@@ -2,6 +2,8 @@
 #define COMMON_H
 
 #include <stdbool.h>
+#include "mraa.hpp" 
+#include "stdint.h"
 
 //constants
 #define MAX_FILENAME            256
@@ -12,25 +14,6 @@
 #define T_HIGH_REGISTER 0x03
 
 #define TMP102Address 0x48
-using namespace mraa;
-
-double temperature_threshold = 30;
-int LDR_Value
-double cur_temp;
-double get_temp(); // temperature in C
-
-double get_temp() {
-	I2c i2c(0);
-	i2c.address(TMP102Address);
-
-	uint8_t dataReg[2];
-
-	int buffer = i2c.read(dataReg, 2); // read two bytes from the registers
-
-	int temperature = ((dataReg[0] << 8 | dataReg[1]) >> 4);
-
-	return temperature*0.0625;
-}
 
 //structure to hold data that is shared between threads
 typedef struct {
