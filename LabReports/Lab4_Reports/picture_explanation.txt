@@ -1,0 +1,6 @@
+badBusStart - When the Galileo initialized its GPIO pins, it glitches and they all pulse like shown in the picture. This messes up the first round of bus transmission with the PIC.
+  This was messing up all rounds of bus transmission until I made the PIC delay after sending an ACK.
+
+PWM_min/maxpulse - Min and max pulse widths from the PWM module
+
+reallyShortFi... - A bug where the galileo didn't hold the bus down long enough when it first pulls it down when writing to it. This worked fine with Lab 2's pic code but not the version with pwm in lab 4.
